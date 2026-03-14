@@ -53,8 +53,16 @@
 - [x] Floating + button for inserting blocks (Lexical playground-style on hover)
 - [x] Drag handles for reordering blocks (DraggableBlockPlugin_EXPERIMENTAL)
 - [x] UI for lists, code blocks, quotes via toolbar buttons
+- [x] Double-click to rename document
 
-### Session 8-10 - Widget System
+### Session 8 - Timeline / Version History (NEXT)
+- [ ] Git-like tree-based version history per document
+- [ ] Auto-save creates version snapshots
+- [ ] View history panel with timeline tree
+- [ ] Restore to previous version
+- [ ] Compare versions (diff view)
+
+### Session 9-10 - Widget System
 - [ ] Define WidgetNode in Lexical
 - [ ] Create widget registry
 - [ ] Insert Widget UI

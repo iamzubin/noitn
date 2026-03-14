@@ -1,9 +1,92 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ThemeProvider } from './hooks/useTheme'
 import { Layout } from './components/Layout'
 import { Plus, FileText, Trash2 } from 'lucide-react'
 import { useDocumentStore } from './stores/documentStore'
 import { Editor } from './components/editor/Editor'
+
+function DocumentItem({ 
+  doc, 
+  isActive, 
+  onSelect, 
+  onDelete 
+}: { 
+  doc: { id: string; title: string }
+  isActive: boolean
+  onSelect: () => void
+  onDelete: (e: React.MouseEvent) => void
+}) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [title, setTitle] = useState(doc.title)
+  const [inputRef, setInputRef] = useState<HTMLInputElement | null>(null)
+  const updateDocument = useDocumentStore((state) => state.updateDocument)
+
+  useEffect(() => {
+    if (isEditing && inputRef) {
+      inputRef.focus()
+      inputRef.select()
+    }
+  }, [isEditing, inputRef])
+
+  const handleDoubleClick = () => {
+    setIsEditing(true)
+    setTitle(doc.title)
+  }
+
+  const handleSubmit = async () => {
+    if (title.trim() && title !== doc.title) {
+      await updateDocument(doc.id, title.trim())
+    }
+    setIsEditing(false)
+  }
+
+  const handleCancel = () => {
+    setTitle(doc.title)
+    setIsEditing(false)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSubmit()
+    } else if (e.key === 'Escape') {
+      handleCancel()
+    }
+  }
+
+  return (
+    <div
+      onClick={isEditing ? undefined : onSelect}
+      onDoubleClick={handleDoubleClick}
+      className={`
+        group flex items-center gap-2 px-3 py-1.5 rounded-md cursor-pointer text-sm transition-colors
+        hover:bg-accent
+        ${isActive ? 'bg-accent text-foreground' : 'text-muted-foreground'}
+      `}
+    >
+      <FileText className="h-4 w-4 shrink-0" />
+      {isEditing ? (
+        <div className="flex-1 flex items-center gap-1">
+          <input
+            ref={setInputRef}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onBlur={handleSubmit}
+            className="flex-1 bg-background border border-input rounded px-1 py-0.5 text-foreground text-sm outline-none"
+          />
+        </div>
+      ) : (
+        <span className="flex-1 truncate">{doc.title}</span>
+      )}
+      <button 
+        onClick={onDelete}
+        className="opacity-0 group-hover:opacity-100 hover:text-destructive"
+      >
+        <Trash2 className="h-3 w-3" />
+      </button>
+    </div>
+  )
+}
 
 function Sidebar() {
   const { documents, currentDocumentId, addDocument, selectDocument, deleteDocument } = useDocumentStore()
@@ -36,24 +119,13 @@ function Sidebar() {
           </span>
         </div>
         {documents.map((doc: { id: string; title: string }) => (
-          <div
+          <DocumentItem
             key={doc.id}
-            onClick={() => selectDocument(doc.id)}
-            className={`
-              group flex items-center gap-2 px-3 py-1.5 rounded-md cursor-pointer text-sm transition-colors
-              hover:bg-accent
-              ${currentDocumentId === doc.id ? 'bg-accent text-foreground' : 'text-muted-foreground'}
-            `}
-          >
-            <FileText className="h-4 w-4 shrink-0" />
-            <span className="flex-1 truncate">{doc.title}</span>
-            <button 
-              onClick={(e) => handleDelete(e, doc.id)}
-              className="opacity-0 group-hover:opacity-100 hover:text-destructive"
-            >
-              <Trash2 className="h-3 w-3" />
-            </button>
-          </div>
+            doc={doc}
+            isActive={currentDocumentId === doc.id}
+            onSelect={() => selectDocument(doc.id)}
+            onDelete={(e) => handleDelete(e, doc.id)}
+          />
         ))}
       </div>
     </div>

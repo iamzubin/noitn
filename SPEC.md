@@ -67,6 +67,7 @@ Users provide their own API keys or use local Ollama. API keys stored in app con
 5. **Sidebar Navigation** - Switch between documents
 6. **Local JSON Storage** - No cloud, all data in app folder
 7. **Light/Dark Theme** - Sunset Noir with toggle
+8. **Timeline / Version History** - Git-like tree-based version history per document
 
 ---
 
@@ -103,6 +104,25 @@ All UI built with shadcn/ui:
 - Designer saves back to widget state on confirm
 - Supports all shadcn form components for editing
 
+### Timeline / Version History
+
+**Git-like tree-based versioning:**
+- Every auto-save creates a new version node
+- Versions form a tree (branches when user explicitly creates a branch)
+- Each version has: timestamp, content snapshot, optional message
+- Tree visualization in sidebar panel
+- Click any node to view/restore that version
+- "Branch" creates new timeline from any version
+- "Merge" not required (local-first, no conflict resolution needed)
+
+**Version Storage:**
+```
+/data/versions/
+  /{documentId}/
+    /versions.json    # Tree structure metadata
+    /{versionId}.json # Content snapshots (compressed)
+```
+
 ---
 
 ## Data Model
@@ -113,7 +133,20 @@ All UI built with shadcn/ui:
   "id": "uuid",
   "title": "My Document",
   "createdAt": "ISO timestamp",
-  "updatedAt": "ISO timestamp"
+  "updatedAt": "ISO timestamp",
+  "currentVersionId": "uuid"
+}
+```
+
+### Versions / Timeline (JSON)
+```
+{
+  "id": "uuid",
+  "documentId": "uuid",
+  "parentId": "uuid | null",
+  "content": "Lexical JSON",
+  "message": "Optional commit message",
+  "createdAt": "ISO timestamp"
 }
 ```
 
