@@ -129,18 +129,6 @@ function countWordsInLexical(node: any): number {
   return 0
 }
 
-function countBlocks(content: string): number {
-  try {
-    const parsed = JSON.parse(content)
-    if (parsed.root?.children) {
-      return parsed.root.children.length
-    }
-  } catch {
-    // ignore
-  }
-  return 0
-}
-
 function getBlockTypes(content: string): Set<string> {
   const types = new Set<string>()
   try {
