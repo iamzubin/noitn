@@ -57,7 +57,9 @@
 
 ### Session 8 - Timeline / Version History (NEXT)
 - [ ] Git-like tree-based version history per document
-- [ ] Auto-save creates version snapshots
+- [x] Auto-save creates version snapshots (with 10% change threshold)
+- [x] New block type added = new version (not merged)
+- [x] Version on tab switch
 - [ ] View history panel with timeline tree
 - [ ] Restore to previous version
 - [ ] Compare versions (diff view)

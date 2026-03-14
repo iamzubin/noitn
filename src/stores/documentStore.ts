@@ -9,6 +9,7 @@ import {
   saveBlocks,
   ensureSampleDocument
 } from '../lib/storage'
+import { createOrUpdateVersion } from '../lib/versions'
 
 interface DocumentState {
   documents: Document[]
@@ -44,6 +45,7 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
     const { currentDocumentId, currentBlocks } = get()
     if (currentDocumentId && currentBlocks && currentDocumentId !== id) {
       await saveBlocks(currentDocumentId, currentBlocks)
+      await createOrUpdateVersion(currentDocumentId, currentBlocks, 'Auto-save on switch')
     }
     const blocks = await loadBlocks(id)
     set({ currentDocumentId: id, currentBlocks: blocks })
@@ -86,6 +88,7 @@ export const useDocumentStore = create<DocumentState>((set, get) => ({
     const id = get().currentDocumentId
     if (id) {
       await saveBlocks(id, blocks)
+      await createOrUpdateVersion(id, blocks)
       set({ currentBlocks: blocks })
     }
   },
