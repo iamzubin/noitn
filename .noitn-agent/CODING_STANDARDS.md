@@ -1,5 +1,22 @@
 # Noitn - Coding Standards
 
+## Dependency Injection
+- Pass dependencies as params or props, not imports inside functions
+- Use React Context for shared services (storage, theme, AI)
+- Example:
+  ```tsx
+  // Good: Pass as props
+  function Editor({ storage, onSave }: { storage: StorageService; onSave: () => void })
+  
+  // Good: Use context
+  const { documents, saveDocument } = useDocumentStore()
+  
+  // Avoid: Import inside function
+  function badExample() {
+    const store = useDocumentStore() // Don't call hooks inside non-component
+  }
+  ```
+
 ## TypeScript
 - Use strict TypeScript mode
 - Avoid `any` - use `unknown` if type is truly unknown
