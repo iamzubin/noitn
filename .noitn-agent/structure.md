@@ -29,7 +29,9 @@ src/
 ├── components/
 │   ├── Layout.tsx          # App layout with titlebar/sidebar
 │   ├── editor/
-│   │   └── Editor.tsx     # Lexical editor
+│   │   ├── Editor.tsx           # Lexical editor
+│   │   ├── EditorToolbar.tsx    # Toolbar with formatting buttons
+│   │   └── KeyboardShortcutsPlugin.tsx  # Keyboard shortcuts
 │   └── ui/                 # shadcn components (50+ files)
 │       ├── button.tsx
 │       ├── card.tsx

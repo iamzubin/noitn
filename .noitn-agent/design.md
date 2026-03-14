@@ -104,3 +104,51 @@ Base unit: 4px
 ```
 
 Sidebar: 60px (icon-only) or 240px (full)
+
+---
+
+## Editor
+
+### Floating Toolbar (Notion-style)
+
+The formatting toolbar appears as a bubble above text selection:
+- Position: Centered above selection using `getBoundingClientRect()`
+- Appearance: Dark zinc-900 with subtle border, backdrop blur
+- Behavior: Shows on text selection, hides when collapsed
+- Tech: `@floating-ui/react` for positioning, `selectionchange` event listener
+
+### Supported Block Types
+
+**Installed & Wired Up:**
+| Type | Package | Status |
+|------|---------|--------|
+| Heading | `@lexical/rich-text` | ✅ In editor config |
+| Quote | `@lexical/rich-text` | ✅ In editor config |
+| List | `@lexical/list` | ✅ In editor config |
+| ListItem | `@lexical/list` | ✅ In editor config |
+| Code | `@lexical/code` | ✅ In editor config |
+| Link | `@lexical/link` | ✅ In editor config |
+| Table | `@lexical/table` | ✅ In editor config |
+
+**Available but not installed:**
+- `@lexical/yjs` - Collaboration
+- `@lexical/markdown` - Markdown support
+- Custom nodes can be created by extending `ElementNode`, `TextNode`, or `DecoratorNode`
+
+### Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| Ctrl/Cmd + B | Bold |
+| Ctrl/Cmd + I | Italic |
+| Ctrl/Cmd + U | Underline |
+| Ctrl/Cmd + 1 | Heading 1 |
+| Ctrl/Cmd + 2 | Heading 2 |
+| Ctrl/Cmd + 3 | Heading 3 |
+
+### Future Block Types (to implement)
+
+- **HorizontalRule** - Custom node for dividers
+- **Image** - Custom DecoratorNode for images
+- **Embed** - YouTube, Twitter embeds via custom nodes
+- **Widgets** - Custom interactive components (Phase 3)
