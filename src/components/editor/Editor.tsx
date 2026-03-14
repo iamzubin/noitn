@@ -1,15 +1,16 @@
+import { useEffect, useCallback, useRef } from 'react'
 import { LexicalComposer } from '@lexical/react/LexicalComposer'
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin'
 import { ContentEditable } from '@lexical/react/LexicalContentEditable'
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
-import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary'
-import { HeadingNode, $createHeadingNode } from '@lexical/rich-text'
+import { HeadingNode } from '@lexical/rich-text'
 import { ListNode, ListItemNode } from '@lexical/list'
 import { CodeNode } from '@lexical/code'
 import { LinkNode } from '@lexical/link'
-import { $getRoot, EditorState, $createParagraphNode } from 'lexical'
+import { $getRoot, createEditor, ParagraphNode } from 'lexical'
+import { useDocumentStore } from '../../stores/documentStore'
 
 const theme = {
   paragraph: 'mb-2',
@@ -24,34 +25,98 @@ function onError(error: Error) {
   console.error(error)
 }
 
-function InitialContentPlugin({ onReady }: { onReady?: () => void }) {
+function LoadContentPlugin({ documentId }: { documentId: string }) {
   const [editor] = useLexicalComposerContext()
+  const currentBlocks = useDocumentStore((state) => state.currentBlocks)
+  const loadedRef = useRef<string | null>(null)
 
-  editor.update(() => {
-    const root = $getRoot()
-    if (root.getFirstChild() === null) {
-      const heading = $createHeadingNode('h1')
-      heading.append($createParagraphNode())
-      root.append(heading)
-      if (onReady) onReady()
+  useEffect(() => {
+    loadedRef.current = null
+  }, [documentId])
+
+  useEffect(() => {
+    if (currentBlocks && currentBlocks !== loadedRef.current) {
+      loadedRef.current = currentBlocks
+      try {
+        const parsed = JSON.parse(currentBlocks)
+        const newEditor = createEditor()
+        newEditor.setEditorState(newEditor.parseEditorState(JSON.stringify(parsed)))
+        editor.setEditorState(newEditor.getEditorState())
+      } catch (e) {
+        console.error('Failed to load blocks:', e)
+        editor.update(() => {
+          const root = $getRoot()
+          root.clear()
+          const paragraph = new ParagraphNode()
+          const heading = new HeadingNode('h1')
+          heading.append(paragraph)
+          root.append(heading)
+        }, { discrete: true })
+      }
     }
-  })
+  }, [editor, currentBlocks, documentId])
 
   return null
 }
 
-export function Editor({
-  onChange,
-  onReady,
-}: {
-  onChange?: (state: EditorState) => void
-  onReady?: () => void
-}) {
+function SaveContentPlugin() {
+  const [editor] = useLexicalComposerContext()
+  const currentDocumentId = useDocumentStore((state) => state.currentDocumentId)
+  const saveCurrentBlocks = useDocumentStore((state) => state.saveCurrentBlocks)
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+
+  const handleSave = useCallback(() => {
+    if (!currentDocumentId) return
+    
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      editor.update(() => {
+        try {
+          const editorState = editor.getEditorState()
+          const json = editorState.toJSON()
+          const serialized = JSON.stringify(json)
+          saveCurrentBlocks(serialized)
+        } catch (e) {
+          console.error('Failed to save:', e)
+        }
+      })
+    }, 1000)
+  }, [editor, currentDocumentId, saveCurrentBlocks])
+
+  useEffect(() => {
+    return editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        handleSave()
+      })
+    })
+  }, [editor, handleSave])
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
+
+  return null
+}
+
+export function Editor() {
+  const currentDocumentId = useDocumentStore((state) => state.currentDocumentId)
+
   const initialConfig = {
     namespace: 'NoitnEditor',
     theme,
     onError,
     nodes: [HeadingNode, ListNode, ListItemNode, CodeNode, LinkNode],
+  }
+
+  if (!currentDocumentId) {
+    return null
   }
 
   return (
@@ -65,8 +130,8 @@ export function Editor({
           ErrorBoundary={LexicalErrorBoundary}
         />
         <HistoryPlugin />
-        <OnChangePlugin onChange={onChange ?? (() => {})} />
-        <InitialContentPlugin onReady={onReady} />
+        <LoadContentPlugin documentId={currentDocumentId} />
+        <SaveContentPlugin />
       </div>
     </LexicalComposer>
   )
