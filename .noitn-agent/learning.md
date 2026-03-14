@@ -90,6 +90,35 @@ Session learnings, pitfalls, and decisions go here.
 
 ---
 
+## Session 6: Editor Toolbar (Floating)
+
+**What worked:**
+- FloatingToolbar using @floating-ui/react for positioning
+- Shows on text selection, hides when collapsed
+- Uses `getBoundingClientRect()` on window.getSelection() for positioning
+- Bubble-style with dark zinc theme matching Notion
+
+**What didn't:**
+- Lexical doesn't have built-in floating toolbar plugin
+- Had to use selectionchange event + Lexical's SELECTION_CHANGE_COMMAND
+- Toolbar positioning needs manual calculation above selection
+
+**Decision:**
+- Use floating bubble menu (Notion-style) instead of fixed toolbar
+- Dark theme: bg-zinc-900/95 with backdrop blur
+- Buttons: white icons, hover shows white/10 bg
+
+**Available Block Types:**
+- @lexical/table - Tables
+- @lexical/list - Lists (ordered/unordered)
+- @lexical/code - Code blocks
+- @lexical/rich-text - Headings, Quotes
+- @lexical/link - Links
+
+See `.noitn-agent/design.md` for full list.
+
+---
+
 ## How to Use
 
 After each session, document:

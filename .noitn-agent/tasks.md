@@ -39,16 +39,18 @@
 
 ## Next Sessions
 
-### Session 6 - Editor Toolbar
-- [ ] Add formatting buttons (bold, italic, underline)
-- [ ] Heading level selector (H1, H2, H3)
-- [ ] Use shadcn Button components
-- [ ] Style to match Sunset Noir theme
+### Session 6 - Editor Toolbar (COMPLETE)
+- [x] Add formatting buttons (bold, italic, underline)
+- [x] Heading level selector (H1, H2, H3)
+- [x] Use shadcn Button components
+- [x] Style to match Sunset Noir theme
+- [x] Floating toolbar (Notion-style) with @floating-ui/react
+- [x] Keyboard shortcuts (Ctrl+B/I/U, Ctrl+1/2/3)
+- [x] Install block type packages (table, quote, list, code)
 
-### Session 7 - Block Types
+### Session 7 - Block Types (NEXT)
 - [ ] Slash command menu for inserting blocks
-- [ ] Add more block types (lists, code, quotes)
-- [ ] Keyboard shortcuts for formatting
+- [ ] UI for lists, code blocks, quotes (toolbar buttons or menu)
 
 ### Session 8-10 - Widget System
 - [ ] Define WidgetNode in Lexical

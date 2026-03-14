@@ -5,12 +5,15 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable'
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary'
-import { HeadingNode } from '@lexical/rich-text'
+import { HeadingNode, QuoteNode } from '@lexical/rich-text'
 import { ListNode, ListItemNode } from '@lexical/list'
 import { CodeNode } from '@lexical/code'
 import { LinkNode } from '@lexical/link'
-import { $getRoot, createEditor, ParagraphNode } from 'lexical'
+import { TableNode, TableCellNode, TableRowNode } from '@lexical/table'
+import { $getRoot, ParagraphNode } from 'lexical'
 import { useDocumentStore } from '../../stores/documentStore'
+import { FloatingToolbar } from './FloatingToolbar'
+import { KeyboardShortcutsPlugin } from './KeyboardShortcutsPlugin'
 
 const theme = {
   paragraph: 'mb-2',
@@ -39,9 +42,8 @@ function LoadContentPlugin({ documentId }: { documentId: string }) {
       loadedRef.current = currentBlocks
       try {
         const parsed = JSON.parse(currentBlocks)
-        const newEditor = createEditor()
-        newEditor.setEditorState(newEditor.parseEditorState(JSON.stringify(parsed)))
-        editor.setEditorState(newEditor.getEditorState())
+        const editorState = editor.parseEditorState(JSON.stringify(parsed))
+        editor.setEditorState(editorState)
       } catch (e) {
         console.error('Failed to load blocks:', e)
         editor.update(() => {
@@ -112,7 +114,7 @@ export function Editor() {
     namespace: 'NoitnEditor',
     theme,
     onError,
-    nodes: [HeadingNode, ListNode, ListItemNode, CodeNode, LinkNode],
+    nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, LinkNode, TableNode, TableCellNode, TableRowNode],
   }
 
   if (!currentDocumentId) {
@@ -121,15 +123,17 @@ export function Editor() {
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className="relative">
+      <div className="relative flex flex-col h-full">
         <RichTextPlugin
           contentEditable={
-            <ContentEditable className="min-h-[200px] outline-none p-4" />
+            <ContentEditable className="flex-1 min-h-[200px] outline-none p-4" />
           }
-          placeholder={<div className="absolute top-4 left-4 text-muted-foreground">Start typing...</div>}
+          placeholder={<div className="absolute top-16 left-4 text-muted-foreground">Start typing...</div>}
           ErrorBoundary={LexicalErrorBoundary}
         />
         <HistoryPlugin />
+        <FloatingToolbar />
+        <KeyboardShortcutsPlugin />
         <LoadContentPlugin documentId={currentDocumentId} />
         <SaveContentPlugin />
       </div>

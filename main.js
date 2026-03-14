@@ -25,6 +25,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 // main.ts
 var import_electron = require("electron");
 var path = __toESM(require("path"));
+var fs = __toESM(require("fs"));
 var isDev = process.env.NODE_ENV === "development" || !import_electron.app.isPackaged;
 var mainWindow = null;
 function createWindow() {
@@ -33,6 +34,8 @@ function createWindow() {
     height: 800,
     minWidth: 800,
     minHeight: 600,
+    frame: false,
+    titleBarStyle: "hidden",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -73,4 +76,69 @@ import_electron.ipcMain.handle("get-app-path", () => {
 });
 import_electron.ipcMain.handle("get-version", () => {
   return import_electron.app.getVersion();
+});
+import_electron.ipcMain.handle("ensure-dir", async (_event, dirPath) => {
+  try {
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
+    return true;
+  } catch {
+    return false;
+  }
+});
+import_electron.ipcMain.handle("read-dir", async (_event, dirPath) => {
+  try {
+    if (!fs.existsSync(dirPath)) {
+      return [];
+    }
+    return fs.readdirSync(dirPath);
+  } catch {
+    return [];
+  }
+});
+import_electron.ipcMain.handle("read-file", async (_event, filePath) => {
+  try {
+    if (!fs.existsSync(filePath)) {
+      return null;
+    }
+    return fs.readFileSync(filePath, "utf-8");
+  } catch {
+    return null;
+  }
+});
+import_electron.ipcMain.handle("write-file", async (_event, filePath, content) => {
+  try {
+    const dir = path.dirname(filePath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(filePath, content, "utf-8");
+    return true;
+  } catch {
+    return false;
+  }
+});
+import_electron.ipcMain.handle("delete-file", async (_event, filePath) => {
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+    return true;
+  } catch {
+    return false;
+  }
+});
+import_electron.ipcMain.on("window-minimize", () => {
+  mainWindow?.minimize();
+});
+import_electron.ipcMain.on("window-maximize", () => {
+  if (mainWindow?.isMaximized()) {
+    mainWindow.unmaximize();
+  } else {
+    mainWindow?.maximize();
+  }
+});
+import_electron.ipcMain.on("window-close", () => {
+  mainWindow?.close();
 });

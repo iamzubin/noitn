@@ -8,6 +8,17 @@
 - Vercel AI SDK
 - JSON file storage
 
+## Available Tools
+
+Use the available tools for code search and exploration:
+- **Grep**: Fast content search across the codebase
+- **Glob**: Find files by patterns (e.g., `src/**/*.tsx`)
+- **Read**: Read files directly
+- **Task**: Use explore agent for open-ended searches
+- **webfetch/codesearch/websearch**: For external documentation
+
+**Before writing code**: Use search tools to understand existing patterns, imports, and conventions.
+
 ## Electron Docs Reference
 
 When working with Electron, reference these docs:
@@ -31,14 +42,14 @@ When working with Electron, reference these docs:
 Each session (15-20 mins):
 
 1. `git branch --show-current`
-2. `git worktree add ../noitn-sessions/session-N main`
+2. Create and work on changes (user runs `npm run dev` themselves - do NOT run npm commands)
 3. Complete task from tasks.md
 4. **Update docs** - Add learnings to `.noitn-agent/learning.md`, update `.noitn-agent/codemap.md` if architecture changed
-5. Ask user: "Should I mark the task as complete in `.noitn-agent/tasks.md`?"
+5. Ask user: "Should I mark the task as complete in `.noitn-agent/tasks.md`?" (mention they can see the change with `git diff .noitn-agent/tasks.md`)
 6. If yes, update tasks.md with the completed session
-7. `git add . && git commit -m "Session N: <description>"`
-8. `git checkout main && git merge session-N --no-ff`
-9. `git worktree remove ../noitn-sessions/session-N`
+7. Ask user to run `git add . && git commit -m "Session N: <description>"`
+8. Ask user to run `git checkout main && git merge session-N --no-ff`
+9. Ask user to remove worktree: `git worktree remove .noitn-agent/sessions/session-N`
 
 ## Always Update Docs
 
@@ -60,10 +71,18 @@ When refactoring: check if changes break other parts, update docs to reflect new
 
 ## Coding Standards
 
-### Dependency Injection
-- Pass dependencies as params, not imports inside functions
-- Use context/providers for shared services (storage, AI, theme)
-- Example: `function Component({ storage }: { storage: StorageService })`
+### React Best Practices
+- Use Vercel React best practices for performance (see loaded skill)
+- Use `use client` for client-side components
+- Use React Server Components where possible
+- Memoize expensive calculations with `useMemo`
+- Memoize callbacks with `useCallback`
+- Use `useState` for local state, `useReducer` for complex state
+- Avoid inline component definitions
+- Use ternary for conditionals, not `&&`
+- Extract static JSX outside render function
+- Use proper key props in lists
+- Avoid unnecessary re-renders
 
 ### Minimal Code
 - One responsibility per function (atomic)
