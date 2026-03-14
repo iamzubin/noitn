@@ -119,3 +119,29 @@ When refactoring: check if changes break other parts, update docs to reflect new
 ## Gitignore
 
 Ignore `.noitn-agent/` folder.
+
+## Testing
+
+Before writing code:
+1. Write failing tests for the new feature/fix
+2. Run tests to verify they fail
+3. Write code to make tests pass
+4. Run tests to verify they pass
+5. Run typecheck and build to ensure no regressions
+
+Run tests with: `npm test` or `vitest`
+
+## TDD Workflow
+
+For each session:
+1. Check current branch: `git branch --show-current`
+2. Review tasks.md for current session goals
+3. For each task:
+   a. Write test(s) first
+   b. Run tests - expect failure
+   c. Implement feature
+   d. Run tests - expect pass
+   e. Run typecheck: `npx tsc --noEmit`
+   f. Run build: `npm run build`
+4. Commit with passing tests
+5. Update learning.md with what worked/didn't
