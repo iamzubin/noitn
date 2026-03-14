@@ -57,44 +57,15 @@
     --default-font-family: 'Geist Variable', sans-serif;
     --default-mono-font-family: var(--font-mono);
     --color-border: var(--border);
-    }
   }
 }
-
-/* Draggable Block Plugin */
-.draggable-block-menu {
-  position: absolute;
-  left: -9999px;
-  top: -9999px;
-}
-
-.draggable-block-menu.is-active {
-  position: absolute;
-  left: auto;
-  top: auto;
-}
-
-.draggable-block-target-line {
-  position: absolute;
-  left: -9999px;
-  width: 100%;
-  height: 2px;
-  background: #FF4F11;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.1s ease;
-}
-
-.draggable-block-target-line.is-active {
-  position: relative;
-  left: 0;
-  opacity: 1;
-}
-
-/* Hide default drag handle if any */
-[data-lexical-drag-handle] {
-  display: none !important;
-}
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
   html, :host {
     line-height: 1.5;
     -webkit-text-size-adjust: 100%;

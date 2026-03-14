@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND, SELECTION_CHANGE_COMMAND } from 'lexical'
+import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND, SELECTION_CHANGE_COMMAND, $createParagraphNode } from 'lexical'
 import { $setBlocksType } from '@lexical/selection'
 import { $createHeadingNode, $isHeadingNode, QuoteNode } from '@lexical/rich-text'
 import { $createListNode, $createListItemNode } from '@lexical/list'
@@ -115,7 +115,6 @@ export function FloatingToolbar() {
       if ($isRangeSelection(selection)) {
         if (headingLevel === level) {
           $setBlocksType(selection, () => {
-            const { $createParagraphNode } = require('lexical')
             return $createParagraphNode()
           })
           setHeadingLevel(null)
