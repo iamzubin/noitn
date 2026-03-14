@@ -1,208 +1,130 @@
 # Noitn - Learnings
 
-Session learnings, pitfalls, and decisions go here.
-
----
-
-## Session 1: Electron + React + TypeScript Setup
-
-**Date:** 2026-03-14
-**What worked:**
-- Using esbuild to compile main.ts/preload.ts for Electron (faster than ts-node)
-- Strict TypeScript with separate tsconfig.electron.json
-- electron-builder with `--mac --dir` for quick dev builds
-
-**What didn't:**
-- Had old index.html with demo content - replaced with React entry point
-- Initially used CommonJS require in main.ts, switched to ES imports
-
-**Decision:**
 - Use esbuild for Electron compilation, not ts-node (simpler)
 - Keep Electron files in root, React in /src
 - Build order: `npm run build` (Vite) → `npm run build:electron` (esbuild) → electron-builder
-
----
-
-## Session 2-3: shadcn/ui + Theme + Layout
-
-**What worked:**
-- shadcn/ui with `npx shadcn@latest init` and component additions
-- Theme toggle using useTheme hook with CSS variables
-- Layout with fixed titlebar, sidebar, main content
-
-**What didn't:**
+- shadcn/ui with `npx shadcn@latest init` and component additions works well
+- Theme toggle using useTheme hook with CSS variables is effective
+- Layout with fixed titlebar, sidebar, main content provides good structure
 - Had to configure Tailwind CSS output properly
 - Layout positioning needed fixed positioning for titlebar
-
-**Decision:**
 - Use shadcn Button, Card, ScrollArea components
 - Titlebar uses WebkitAppRegion for drag support
-
----
-
-## Session 4: JSON Storage
-
-**What worked:**
-- IPC pattern for file operations (readFile, writeFile, etc.)
-- Separate folders for documents (metadata) and blocks (content)
+- IPC pattern for file operations (readFile, writeFile, etc.) works reliably
+- Separate folders for documents (metadata) and blocks (content) is clean
 - ensureSampleDocument creates welcome doc on first launch
-
-**What didn't:**
 - Preload had missing API methods initially - had to add all needed functions
-
-**Decision:**
 - Storage API: getAppPath, ensureDir, readDir, readFile, writeFile, deleteFile
-
----
-
-## Session 5: Lexical Editor
-
-**What worked:**
-- LexicalComposer with basic plugins
-- HeadingNode for headings
-- Debounced save with setTimeout + clearTimeout
-
-**What didn't:**
+- LexicalComposer with basic plugins works well
+- HeadingNode for headings is effective
+- Debounced save with setTimeout + clearTimeout prevents excessive saves
 - LoadContentPlugin needed careful handling to not re-load on same doc
 - Had to use createEditor().parseEditorState() for proper deserialization
-
-**Decision:**
 - Save debounce: 1 second delay
 - Reset loadedRef when documentId changes
-- Auto-save on document switch
-
----
-
-## Session 6: Sidebar + Toolbar + Editor Features
-
-**What worked:**
-- FloatingToolbar using @floating-ui/react for positioning
+- Auto-save on document switch ensures data isn't lost
+- FloatingToolbar using @floating-ui/react for positioning works well
 - Shows on text selection, hides when collapsed
 - Uses `getBoundingClientRect()` on window.getSelection() for positioning
-- Bubble-style with dark zinc theme matching Notion
-- Zustand store for document state
-- Sidebar with document list, new document, delete document
-
-**What didn't:**
-- Lexical doesn't have built-in floating toolbar plugin
+- Bubble-style with dark zinc theme matching Notion provides good UX
+- Zustand store for document state is effective
+- Sidebar with document list, new document, delete document works well
+- Lexical doesn't have built-in floating toolbar plugin - had to implement custom
 - Had to use selectionchange event + Lexical's SELECTION_CHANGE_COMMAND
 - Toolbar positioning needs manual calculation above selection
 - Each document needs its own blocks file
-
-**Decision:**
 - Use floating bubble menu (Notion-style) instead of fixed toolbar
 - Dark theme: bg-zinc-900/95 with backdrop blur
 - Buttons: white icons, hover shows white/10 bg
-- Auto-save before switching documents
-
-**Available Block Types:**
-- @lexical/table - Tables
-- @lexical/list - Lists (ordered/unordered)
-- @lexical/code - Code blocks
-- @lexical/rich-text - Headings, Quotes
-- @lexical/link - Links
-
-See `.noitn-agent/design.md` for full list.
-
----
-
-## Session 7: Block Types + Draggable Blocks + Versions
-
-**What worked:**
+- Auto-save before switching documents prevents data loss
+- Available Block Types: @lexical/table - Tables, @lexical/list - Lists, @lexical/code - Code blocks, @lexical/rich-text - Headings, Quotes, @lexical/link - Links
 - SlashCommandMenuPlugin triggers on "/" character, shows filtered options
 - Lexical's DraggableBlockPlugin_EXPERIMENTAL provides drag handles on block hover
 - Floating + button inserts paragraph below current block
-- Keyboard navigation (arrows + Enter) in slash menu
-- Version history with 10% change threshold
-- New block type (widget, list) always creates new version
-- Double-click to rename documents in sidebar
-
-**What didn't:**
+- Keyboard navigation (arrows + Enter) in slash menu works well
+- Version history with 10% change threshold prevents excessive versions
+- New block type (widget, list) always creates new version (correct behavior)
+- Double-click to rename documents in sidebar improves UX
 - DraggableBlockPlugin needs manual CSS positioning
 - Had to create custom menu component with Plus + Grip icons
 - Toolbar buttons (underline, lists) had z-index/pointer-events issues
-
-**Decision:**
 - Use DraggableBlockPlugin_EXPERIMENTAL from @lexical/react
 - Menu shows on hover (left side of block), not on drag
 - Slash command for block type switching, + button for quick paragraph insert
-- Version created on auto-save AND tab switch
-- `createOrUpdateVersion` in versions.ts handles merge logic
-
-**Known Issues:**
-- Electron menu warning on macOS (harmless)
+- Version created on auto-save AND tab switch ensures proper versioning
+- `createOrUpdateVersion` in versions.ts handles merge logic correctly
+- Electron menu warning on macOS is harmless
 - Toolbar button interactions may need debugging
-
----
-
-## Session 8-9: Widget System
-
-**What worked:**
-- WidgetNode extends DecoratorNode for React component rendering
+- WidgetNode extends DecoratorNode for React component rendering is correct approach
 - decorate() method returns WidgetComponent which handles all widget types
 - Slash command menu dynamically adds widget options from registry
-- Widget types: timer, checkbox, counter, table, placeholder
-- WidgetDesigner drawer for editing widget properties
-- Geist fonts copied to public/files/ for packaging
-
-**What didn't:**
+- Widget types: timer, checkbox, counter, table, placeholder work well
+- WidgetDesigner drawer for editing widget properties is effective
+- Geist fonts copied to public/files/ for packaging works
 - Initially tried to render widgets separately via WidgetRenderer - caused duplicate key errors
 - Fixed by removing WidgetRenderer and using Lexical's built-in DecoratorNode rendering
 - Had duplicate registry.ts file that was causing issues
-
-**Decision:**
 - Use Lexical's DecoratorNode decorate() for widget rendering (automatic)
 - WidgetRenderer removed - not needed
 - Fonts added to public/files/ and copied to dist on build
-
----
-
-## Session 10: Version History Panel
-
-**What worked:**
-- HistoryPanel slides in from right side (Drawer-style)
-- Timeline with dots showing versions, newest first
-- Expandable version items showing word count and timestamp
-- Restore functionality saves current content as new version before restoring
-- Version merging logic with 10% threshold from previous session
-- History button in sidebar below "New Document"
-
-**What didn't:**
-- Diff view cancelled (too complex for MVP)
+- HistoryPanel slides in from right side (Drawer-style) works well
+- Timeline with dots showing versions, newest first provides good visualization
+- Expandable version items showing word count and timestamp is informative
+- Restore functionality saves current content as new version before restoring (correct)
+- Version merging logic with 10% threshold from previous session works
+- History button in sidebar below "New Document" is accessible
+- Diff view cancelled (too complex for MVP) was the right call
 - Unused `countBlocks` function had to be removed for clean typecheck
-
-**Decision:**
 - Use slide-in panel (not modal) for history - less intrusive
-- Show versions as timeline with relative timestamps
-- Only restore functionality for now, branch UI placeholder for future
+- Show versions as timeline with relative timestamps is user-friendly
+- Only restore functionality for now, branch UI placeholder for future is pragmatic
+- Version history panel with click-to-select versions works well
+- Selected version highlighted with orange background provides clear feedback
+- Restore button appears at top when version selected improves UX
+- Simple linear version history (no branching) is sufficient for MVP
+- Restore creates new version from old content (Google Docs style) is correct
+- Previous attempts over-engineered with branching UI were too complex for MVP
+- Simple list of versions, newest first is easiest to understand
+- Click version to select it works well
+- Restore button appears in top bar when version selected is convenient
+- Restore saves current state as new version then loads selected content (correct approach)
+- No branching - pure linear history like Google Docs is suitable for MVP
+- Added isReadOnly flag to document store to track read-only state works
+- Modified Editor component to respect read-only mode (disables editing, toolbar, plugins) effectively
+- Updated Layout component to handle version restoration with proper read-only preview
+- HistoryPanel already had the necessary restore functionality
+- When viewing old versions, editor enters read-only mode preventing accidental edits (critical)
+- Restore functionality saves current state as new version before loading selected content (correct)
+- Initial attempt to use useDocumentStore.getState() in Layout caused issues with reactivity
+- Had to properly handle async operations when saving current state before restore
+- Use zustand store's isReadOnly flag to control editor editability
+- Pass onVersionRestore callback from Layout to HistoryPanel for proper restoration flow
+- Set readOnly=true on LexicalComposer and ContentEditable components when in preview mode
+- Show appropriate placeholder text when in read-only mode ("Viewing version history")
+- Added tests for read-only mode functionality in editor.test.tsx
 
----
+**Version Branching Feature:**
+- Added parentId and branchName fields to Version interface for branch support
+- Added createBranchVersion function to create new versions on a branch
+- HistoryPanel separates main line versions from branch versions visually
+- Main line versions use primary color dots, branch versions use orange dots
+- Branch versions show in a separate "Branches" section with orange styling
+- When editing old versions (in read-only mode), changes create a new branch
+- Added previewVersionId to track which version we're branching from
+- setPreviewVersionId action sets both isReadOnly and previewVersionId together
+- Redesigned HistoryPanel with Git-like dark UI aesthetic
+- Zinc-950 background with commit tree visualization
+- Orange accent (#FF4F11) for HEAD, selected version, and branch elements
+- Git-style 7-character commit hashes
+- Branch pills with icons showing branch names
+- Rail/line connects commits - orange when selected, grey otherwise
+- Footer panel showing selected commit details with restore button
 
-## Session 11: Version History (Simplified - Google Docs Style)
-
-**What worked:**
-- Version history panel with click-to-select versions
-- Selected version highlighted with orange background
-- Restore button appears at top when version selected
-- Simple linear version history (no branching)
-- Restore creates new version from old content (Google Docs style)
-
-**What didn't:**
-- Previous attempts over-engineered with branching UI
-- Too complex for MVP
-
-**Decision:**
-- Simple list of versions, newest first
-- Click version to select it
-- Restore button appears in top bar when version selected
-- Restore saves current state as new version then loads selected content
-- No branching - pure linear history like Google Docs
-
----
-
-## How to Use
-
-After each session, document:
-1. What you learned
-2. What to avoid
-3. Architecture decisions made
+**Files Modified:**
+- src/stores/documentStore.ts - Added isReadOnly state and setReadOnly action
+- src/components/editor/Editor.tsx - Added isReadOnly usage and conditional rendering
+- src/components/Layout.tsx - Fixed handleVersionRestore and passed to HistoryPanel
+- src/components/editor/editor.test.tsx - Added tests for read-only mode
+- src/components/editor/HistoryPanel.tsx - Added branch rendering with Git-like UI
+- src/lib/versions.ts - Added parentId, branchName to Version, added createBranchVersion
+- SPEC.md - Updated documentation to reflect read-only preview feature

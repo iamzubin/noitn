@@ -29,7 +29,7 @@
 | `src/App.tsx` | Root component, renders Sidebar + Editor |
 | `src/components/Layout.tsx` | App shell with titlebar, sidebar, main |
 | `src/components/editor/Editor.tsx` | Lexical editor with load/save plugins |
-| `src/stores/documentStore.ts` | Zustand store for documents |
+| `src/stores/documentStore.ts` | Zustand store for documents (includes isReadOnly flag for version history) |
 | `src/lib/storage.ts` | JSON file read/write via IPC |
 | `main.ts` | Electron main process |
 | `preload.ts` | Bridge between main and renderer |

@@ -69,13 +69,13 @@
 - [x] New block type added = new version (not merged)
 - [x] Version on tab switch
 - [x] View history panel with timeline tree
-- [ ] Restore to previous version with read-only preview mode
+- [x] Restore to previous version with read-only preview mode
 - [x] Collapsible sidebar with theme toggle
 - [x] Tests for version history
 - [x] Simplified version history UI (Google Docs style)
-- [ ] Prominent restore button with visual feedback when version selected
-- [ ] Read-only mode when previewing old versions (no editing allowed)
-- [ ] Automatic branch creation when editing old versions (git-like behavior)
+- [x] Prominent restore button with visual feedback when version selected
+- [x] Read-only mode when previewing old versions (no editing allowed)
+- [x] Automatic branch creation when editing old versions (git-like behavior)
 
 ### Session 11-14 - AI Integration (BROKEN DOWN)
 #### Session 11: AI SDK Setup

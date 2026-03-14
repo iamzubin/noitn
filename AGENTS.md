@@ -103,6 +103,10 @@ When refactoring: check if changes break other parts, update docs to reflect new
 - Quick docstring for functions: `// Does X, returns Y`
 - Explain *why*, not *what*
 - Skip obvious comments
+- **NEW**: Add comments to all functions explaining what they do, where they're called from, and how they work
+- For event handlers: Describe what event they handle and what they do
+- For complex logic: Explain the algorithm or approach used
+- For public APIs: Document parameters, return values, and side effects
 
 ### Structure
 - Colocate: component + tests + styles nearby

@@ -5,6 +5,8 @@ export interface Version {
   message: string
   createdAt: number
   wordCount: number
+  parentId: string | null  // For branch support - null means it's on main line
+  branchName?: string       // Optional branch name for branches
 }
 
 export interface VersionTree {
@@ -79,6 +81,7 @@ export async function createOrUpdateVersion(
     message,
     createdAt: Date.now(),
     wordCount,
+    parentId: null,  // Main line version
   }
   
   if (latestVersion && shouldMergeVersions(latestVersion.content, content)) {
@@ -96,6 +99,46 @@ export async function createOrUpdateVersion(
   versions.unshift(newVersion)
   await saveVersionTree(documentId, versions)
   return newVersion
+}
+
+// Create a new version on a branch (when editing an old version)
+// parentVersionId: The version we're branching from
+// content: The new content for this branch version
+// branchName: Optional name for the branch
+export async function createBranchVersion(
+  documentId: string,
+  parentVersionId: string,
+  content: string,
+  message: string = '',
+  branchName?: string
+): Promise<Version> {
+  const versions = await loadVersions(documentId)
+  
+  // Find parent version to get its timestamp for branch name
+  const parentVersion = versions.find(v => v.id === parentVersionId)
+  const parentDate = parentVersion ? formatShortDate(parentVersion.createdAt) : 'unknown'
+  
+  const wordCount = countWords(content)
+  const newVersion: Version = {
+    id: generateId(),
+    documentId,
+    content,
+    message,
+    createdAt: Date.now(),
+    wordCount,
+    parentId: parentVersionId,
+    branchName: branchName || `Branch from ${parentDate}`,
+  }
+  
+  // Add the new branch version to the list
+  versions.unshift(newVersion)
+  await saveVersionTree(documentId, versions)
+  return newVersion
+}
+
+// Helper to format a short date for branch names
+function formatShortDate(timestamp: number): string {
+  return new Date(timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
 export function countWords(text: string): number {

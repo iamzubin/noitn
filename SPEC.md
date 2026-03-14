@@ -133,7 +133,7 @@ All UI built with shadcn/ui:
 - Creates version on auto-save AND document switch
 - Merges into previous version if word count change < 10%
 - Always creates new version if new block type added (widget, list, etc.)
-- Each version stores: id, parentId, content, message, timestamp, wordCount
+- Each version stores: id, parentId, branchName, content, message, timestamp, wordCount
 
 **Version Storage:**
 ```
@@ -142,10 +142,31 @@ All UI built with shadcn/ui:
     /versions.json    # Version tree (all versions)
 ```
 
+**Read-Only Preview:**
+- When viewing old versions, editor enters read-only mode
+- Prevents accidental editing of historical content
+- Restore functionality saves current state as new version before loading selected content
+- Visual indication shows when in read-only preview mode
+
+**Git-like Branching:**
+- Click any version to preview it in read-only mode
+- Edit while in preview mode to create a new branch
+- Branch versions shown in separate "Branches" section with orange styling
+- Main line commits use grey nodes, HEAD uses glowing orange node
+- Selected version highlighted with orange border
+- Git-style 7-character commit hashes displayed
+- Rail line connects commits (orange when selected, grey otherwise)
+
+**UI Design:**
+- Dark zinc-950 background with subtle borders
+- Orange accent (#FF4F11) for HEAD, selected, and branch elements
+- GitCommit icon in header with commit count
+- Footer panel shows selected commit details with restore button
+- Branch pills with GitBranch icons
+
 **Future:**
-- Tree visualization in sidebar panel
+- Tree visualization with connected lines from branches
 - Click any node to view/restore that version
-- "Branch" creates new timeline from any version
 
 ---
 

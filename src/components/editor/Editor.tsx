@@ -31,15 +31,21 @@ function onError(error: Error) {
   console.error(error)
 }
 
+// Loads editor content from storage when documentId changes
+// Called automatically by React when documentId prop changes
+// Prevents re-loading same content on every render via loadedRef
 function LoadContentPlugin({ documentId }: { documentId: string }) {
   const [editor] = useLexicalComposerContext()
   const currentBlocks = useDocumentStore((state) => state.currentBlocks)
   const loadedRef = useRef<string | null>(null)
 
+  // Reset loadedRef when documentId changes to force reload
   useEffect(() => {
     loadedRef.current = null
   }, [documentId])
 
+  // Load content into editor when it changes in storage
+  // Compares with loadedRef to avoid unnecessary re-renders
   useEffect(() => {
     if (currentBlocks && currentBlocks !== loadedRef.current) {
       loadedRef.current = currentBlocks
@@ -49,6 +55,7 @@ function LoadContentPlugin({ documentId }: { documentId: string }) {
         editor.setEditorState(editorState)
       } catch (e) {
         console.error('Failed to load blocks:', e)
+        // Fallback to empty editor with heading if parsing fails
         editor.update(() => {
           const root = $getRoot()
           root.clear()
@@ -64,12 +71,17 @@ function LoadContentPlugin({ documentId }: { documentId: string }) {
   return null
 }
 
+// Saves editor content to storage with debounce to prevent excessive saves
+// Called automatically by Lexical's update listener on every change
+// Debounced to 1 second to balance responsiveness with performance
 function SaveContentPlugin() {
   const [editor] = useLexicalComposerContext()
   const currentDocumentId = useDocumentStore((state) => state.currentDocumentId)
   const saveCurrentBlocks = useDocumentStore((state) => state.saveCurrentBlocks)
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
 
+  // Debounced save handler to prevent saving on every keystroke
+  // Clears previous timeout and sets new one on each change
   const handleSave = useCallback(() => {
     if (!currentDocumentId) return
     
@@ -77,6 +89,7 @@ function SaveContentPlugin() {
       clearTimeout(timeoutRef.current)
     }
 
+    // Save after 1 second of inactivity
     timeoutRef.current = setTimeout(() => {
       editor.update(() => {
         try {
@@ -91,6 +104,8 @@ function SaveContentPlugin() {
     }, 1000)
   }, [editor, currentDocumentId, saveCurrentBlocks])
 
+  // Register update listener to call handleSave on editor changes
+  // Cleanup function removes listener when component unmounts
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
       editorState.read(() => {
@@ -99,6 +114,7 @@ function SaveContentPlugin() {
     })
   }, [editor, handleSave])
 
+  // Cleanup timeout on unmount to prevent memory leaks
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -110,16 +126,29 @@ function SaveContentPlugin() {
   return null
 }
 
+// Main editor component that renders the Lexical editor with all plugins
+// Called from App.tsx to display the editor interface
+// Handles read-only mode for version history viewing
 export function Editor() {
+  // Get current document ID and read-only state from Zustand store
   const currentDocumentId = useDocumentStore((state) => state.currentDocumentId)
+  const isReadOnly = useDocumentStore((state) => state.isReadOnly)
 
+  // LexicalComposer configuration
+  // namespace: Unique identifier for this editor instance
+  // theme: Custom styling for different node types
+  // onError: Error handler for Lexical errors
+  // nodes: List of Lexical nodes to register (heading, quote, list, etc.)
+  // editable: Boolean to enable/disable editing based on read-only state
   const initialConfig = {
     namespace: 'NoitnEditor',
     theme,
     onError,
     nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, LinkNode, TableNode, TableCellNode, TableRowNode, WidgetNode],
+    editable: !isReadOnly,
   }
 
+  // Return null if no document is selected (prevents errors)
   if (!currentDocumentId) {
     return null
   }
@@ -129,18 +158,21 @@ export function Editor() {
       <div className="relative flex flex-col h-full">
         <RichTextPlugin
           contentEditable={
-            <ContentEditable className="flex-1 min-h-[200px] outline-none p-4" />
+            <ContentEditable 
+              className="flex-1 min-h-[200px] outline-none p-4"
+              readOnly={isReadOnly}
+            />
           }
-          placeholder={<div className="absolute top-16 left-4 text-muted-foreground">Start typing...</div>}
+          placeholder={<div className="absolute top-16 left-4 text-muted-foreground">{isReadOnly ? 'Viewing version history' : 'Start typing...'}</div>}
           ErrorBoundary={LexicalErrorBoundary}
         />
         <HistoryPlugin />
-        <FloatingToolbar />
-        <KeyboardShortcutsPlugin />
-        <SlashCommandMenuPlugin />
-        <DraggableBlockPlugin />
+        {!isReadOnly && <FloatingToolbar />}
+        {!isReadOnly && <KeyboardShortcutsPlugin />}
+        {!isReadOnly && <SlashCommandMenuPlugin />}
+        {!isReadOnly && <DraggableBlockPlugin />}
         <LoadContentPlugin documentId={currentDocumentId} />
-        <SaveContentPlugin />
+        {!isReadOnly && <SaveContentPlugin />}
       </div>
     </LexicalComposer>
   )

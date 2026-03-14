@@ -116,6 +116,7 @@ The formatting toolbar appears as a bubble above text selection:
 - Appearance: Dark zinc-900 with subtle border, backdrop blur
 - Behavior: Shows on text selection, hides when collapsed
 - Tech: `@floating-ui/react` for positioning, `selectionchange` event listener
+- Read-Only Mode: Hidden when editor is in read-only state (version history preview)
 
 ### Supported Block Types
 
