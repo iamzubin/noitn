@@ -1,7 +1,6 @@
 export interface Version {
   id: string
   documentId: string
-  parentId: string | null
   content: string
   message: string
   createdAt: number
@@ -76,7 +75,6 @@ export async function createOrUpdateVersion(
   const newVersion: Version = {
     id: generateId(),
     documentId,
-    parentId: latestVersion?.id || null,
     content,
     message,
     createdAt: Date.now(),
@@ -84,7 +82,6 @@ export async function createOrUpdateVersion(
   }
   
   if (latestVersion && shouldMergeVersions(latestVersion.content, content)) {
-    // Update last version instead of creating new
     versions[0] = {
       ...latestVersion,
       content,
@@ -96,7 +93,6 @@ export async function createOrUpdateVersion(
     return versions[0]
   }
   
-  // Create new version
   versions.unshift(newVersion)
   await saveVersionTree(documentId, versions)
   return newVersion
@@ -182,29 +178,4 @@ export async function restoreVersion(documentId: string, versionId: string): Pro
   const versions = await loadVersions(documentId)
   const version = versions.find(v => v.id === versionId)
   return version?.content || null
-}
-
-export async function createBranch(
-  documentId: string,
-  fromVersionId: string,
-  message: string = 'Branch'
-): Promise<Version | null> {
-  const versions = await loadVersions(documentId)
-  const fromVersion = versions.find(v => v.id === fromVersionId)
-  
-  if (!fromVersion) return null
-  
-  const newVersion: Version = {
-    id: generateId(),
-    documentId,
-    parentId: fromVersionId,
-    content: fromVersion.content,
-    message,
-    createdAt: Date.now(),
-    wordCount: fromVersion.wordCount,
-  }
-  
-  versions.unshift(newVersion)
-  await saveVersionTree(documentId, versions)
-  return newVersion
 }

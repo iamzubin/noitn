@@ -7,7 +7,7 @@
   "type": "commonjs",
   "main": "main.js",
   "scripts": {
-    "dev": "npm run build:css && npm run build:electron && concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "dev": "npm run build:css && npm run build:electron && concurrently \"vite\" \"wait-on http://localhost:5173 && npx electron .\"",
     "build": "vite build",
     "build:css": "node ./node_modules/@tailwindcss/cli/dist/index.mjs -i ./src/index.css -o ./src/index.output.css",
     "build:electron": "esbuild main.ts preload.ts --bundle --platform=node --outdir=. --external:electron --external:path --external:fs --format=cjs",

@@ -178,6 +178,28 @@ See `.noitn-agent/design.md` for full list.
 
 ---
 
+## Session 11: Version History (Simplified - Google Docs Style)
+
+**What worked:**
+- Version history panel with click-to-select versions
+- Selected version highlighted with orange background
+- Restore button appears at top when version selected
+- Simple linear version history (no branching)
+- Restore creates new version from old content (Google Docs style)
+
+**What didn't:**
+- Previous attempts over-engineered with branching UI
+- Too complex for MVP
+
+**Decision:**
+- Simple list of versions, newest first
+- Click version to select it
+- Restore button appears in top bar when version selected
+- Restore saves current state as new version then loads selected content
+- No branching - pure linear history like Google Docs
+
+---
+
 ## How to Use
 
 After each session, document:

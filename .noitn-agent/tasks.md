@@ -72,7 +72,8 @@
 - [x] Restore to previous version
 - [x] Collapsible sidebar with theme toggle
 - [x] Tests for version history
-
+- [x] Simplified version history UI (Google Docs style)
+- [x] Click to select version, restore button appears on selection
 
 ### Session 11-14 - AI Integration
 - [ ] AI SDK setup
