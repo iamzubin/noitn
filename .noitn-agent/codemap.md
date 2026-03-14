@@ -1,56 +1,75 @@
 # Noitn - Code Map
 
-Architecture overview for quick reference.
-
----
-
-## Layer Architecture
+## Architecture
 
 ```
-┌─────────────────────────────────────┐
-│  UI Layer (React + shadcn)          │
-│  /src/components/*                  │
-├─────────────────────────────────────┤
-│  Feature Layer                       │
-│  /src/features/*                    │
-├─────────────────────────────────────┤
-│  Service Layer                       │
-│  /src/lib/* (storage, ai, etc)      │
-├─────────────────────────────────────┤
-│  Platform Layer (Electron IPC)      │
-│  /src/main/* (main process)         │
-└─────────────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│  UI Layer (React + shadcn)                         │
+│  /src/components/ui/*  - shadcn components         │
+│  /src/components/Layout.tsx - App layout            │
+│  /src/components/editor/ - Lexical editor           │
+├─────────────────────────────────────────────────────┤
+│  State Layer (Zustand)                              │
+│  /src/stores/documentStore.ts - Document state      │
+├─────────────────────────────────────────────────────┤
+│  Service Layer                                      │
+│  /src/lib/storage.ts - File operations (IPC)       │
+│  /src/lib/utils.ts - Utility functions            │
+├─────────────────────────────────────────────────────┤
+│  Electron (Main Process)                            │
+│  main.ts - Window management, IPC handlers          │
+│  preload.ts - Expose APIs to renderer              │
+└─────────────────────────────────────────────────────┘
 ```
-
----
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
-| `src/App.tsx` | Root component |
-| `src/lib/storage.ts` | JSON file operations |
-| `src/lib/ai-scope.ts` | AI allowed imports |
-| `src/components/editor/Editor.tsx` | Lexical editor |
-| `src/components/widgets/*` | Widget components |
+| `src/App.tsx` | Root component, renders Sidebar + Editor |
+| `src/components/Layout.tsx` | App shell with titlebar, sidebar, main |
+| `src/components/editor/Editor.tsx` | Lexical editor with load/save plugins |
+| `src/stores/documentStore.ts` | Zustand store for documents |
+| `src/lib/storage.ts` | JSON file read/write via IPC |
+| `main.ts` | Electron main process |
+| `preload.ts` | Bridge between main and renderer |
 
----
-
-## Dependency Flow
+## Data Flow
 
 ```
-UI → Hooks → Services → Platform
-                  ↓
-              Stores (React Context)
+User Types → Lexical → SaveContentPlugin (debounced 1s)
+           → documentStore.saveCurrentBlocks()
+           → storage.saveBlocks()
+           → IPC: writeFile → Main Process → fs
+
+Select Doc → documentStore.selectDocument()
+           → storage.loadBlocks()
+           → IPC: readFile → LoadContentPlugin → Editor
 ```
 
-## DI Pattern
+## Storage
 
-Services injected via props or context:
-```tsx
-// Option 1: Props
-<Component storage={storage} ai={ai} />
+- Location: `{appDataPath}/noitn/`
+- Documents: `documents/{id}.json` - metadata only
+- Blocks: `blocks/{id}.json` - Lexical JSON state
 
-// Option 2: Context
-const { storage, ai } = useServices()
+## IPC APIs (preload.ts)
+
+```typescript
+window.electronAPI {
+  getAppPath() → Promise<string>
+  getVersion() → Promise<string>
+  ensureDir(path) → Promise<boolean>
+  readDir(path) → Promise<string[]>
+  readFile(path) → Promise<string | null>
+  writeFile(path, content) → Promise<boolean>
+  deleteFile(path) → Promise<boolean>
+}
 ```
+
+## Titlebar
+
+- Custom frameless window with `frame: false`
+- Drag region via `WebkitAppRegion: drag`
+- Traffic light spacing: `pl-16` for macOS alignment
+- z-index: 100 to overlay content

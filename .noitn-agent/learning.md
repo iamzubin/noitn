@@ -23,17 +23,70 @@ Session learnings, pitfalls, and decisions go here.
 
 ---
 
-## Session X: [Title]
+## Session 2-3: shadcn/ui + Theme + Layout
 
-**Date:** 
 **What worked:**
-- 
+- shadcn/ui with `npx shadcn@latest init` and component additions
+- Theme toggle using useTheme hook with CSS variables
+- Layout with fixed titlebar, sidebar, main content
 
 **What didn't:**
-- 
+- Had to configure Tailwind CSS output properly
+- Layout positioning needed fixed positioning for titlebar
 
 **Decision:**
-- 
+- Use shadcn Button, Card, ScrollArea components
+- Titlebar uses WebkitAppRegion for drag support
+
+---
+
+## Session 4: JSON Storage
+
+**What worked:**
+- IPC pattern for file operations (readFile, writeFile, etc.)
+- Separate folders for documents (metadata) and blocks (content)
+- ensureSampleDocument creates welcome doc on first launch
+
+**What didn't:**
+- Preload had missing API methods initially - had to add all needed functions
+
+**Decision:**
+- Storage API: getAppPath, ensureDir, readDir, readFile, writeFile, deleteFile
+
+---
+
+## Session 5: Lexical Editor
+
+**What worked:**
+- LexicalComposer with basic plugins
+- HeadingNode for headings
+- Debounced save with setTimeout + clearTimeout
+
+**What didn't:**
+- LoadContentPlugin needed careful handling to not re-load on same doc
+- Had to use createEditor().parseEditorState() for proper deserialization
+
+**Decision:**
+- Save debounce: 1 second delay
+- Reset loadedRef when documentId changes
+- Auto-save on document switch
+
+---
+
+## Session 6-10: Sidebar + Document Switching
+
+**What worked:**
+- Zustand store for document state
+- Sidebar in Layout with document list
+- New Document creates both doc file and blocks file
+
+**What didn't:**
+- Each document needs its own blocks file - added in createDocument()
+- Initial load needed to handle empty state
+
+**Decision:**
+- Each doc gets empty paragraph on creation
+- Auto-save before switching documents
 
 ---
 

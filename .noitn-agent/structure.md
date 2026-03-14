@@ -1,35 +1,74 @@
 # Noitn - Project Structure
 
-## Current Structure
+## Root Files
 
 ```
 noitn/
 ├── SPEC.md                   # Project specification
-├── RESEARCH.md               # Research notes
-├── THEME.md                  # Theme documentation
-├── AGENT.md                  # Agent instructions
-├── .noitn-agent/            # Agent files (gitignored)
-│   ├── tasks.md             # Task list
-│   ├── CODING_STANDARDS.md  # Coding rules
-│   ├── structure.md         # Project structure (this file)
-│   ├── design.md            # Design specification
-│   ├── learning.md          # Learnings from sessions
-│   └── codemap.md           # Code architecture map
+├── AGENTS.md                 # Agent instructions
+├── package.json              # Dependencies
+├── vite.config.ts           # Vite config
+├── tailwind.config.js       # Tailwind config
+├── tsconfig.json            # TypeScript config
+├── main.ts                  # Electron main process
+├── preload.ts               # Electron preload script
+├── index.html               # Entry HTML
+└── dist/                   # Production build
 ```
 
-## Tech Stack
+## Source (`/src`)
 
-| Layer | Tech |
-|-------|------|
-| Desktop | Electron |
-| Editor | Lexical |
-| UI | shadcn/ui |
-| AI | Vercel AI SDK |
-| Storage | JSON files |
+```
+src/
+├── main.tsx                 # React entry point
+├── App.tsx                  # Root component
+├── vite-env.d.ts            # TypeScript declarations
+├── index.css                # Tailwind input
+├── index.output.css         # Tailwind output
+│
+├── components/
+│   ├── Layout.tsx          # App layout with titlebar/sidebar
+│   ├── editor/
+│   │   └── Editor.tsx     # Lexical editor
+│   └── ui/                 # shadcn components (50+ files)
+│       ├── button.tsx
+│       ├── card.tsx
+│       ├── dialog.tsx
+│       ├── drawer.tsx
+│       ├── scroll-area.tsx
+│       └── ...
+│
+├── hooks/
+│   ├── useTheme.tsx        # Theme toggle hook
+│   └── use-mobile.ts       # Mobile detection
+│
+├── lib/
+│   ├── storage.ts         # File operations (IPC)
+│   └── utils.ts            # Utility functions (cn())
+│
+└── stores/
+    └── documentStore.ts   # Zustand document state
+```
 
-## Session Tracking
+## Build Outputs
 
-| Session | Branch | Status |
-|---------|--------|--------|
-| 1 | session-1 | pending |
-| ... | ... | ... |
+```
+├── main.js                 # Compiled main.ts
+├── preload.js              # Compiled preload.ts
+└── dist/                  # Vite production build
+    └── index.html
+```
+
+## Data Storage
+
+Located at: `~/Library/Application Support/noitn/`
+
+```
+noitn/
+├── documents/
+│   ├── {id}.json    # Document metadata
+│   └── ...
+└── blocks/
+    ├── {id}.json    # Lexical editor state
+    └── ...
+```
