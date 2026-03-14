@@ -157,6 +157,27 @@ See `.noitn-agent/design.md` for full list.
 
 ---
 
+## Session 10: Version History Panel
+
+**What worked:**
+- HistoryPanel slides in from right side (Drawer-style)
+- Timeline with dots showing versions, newest first
+- Expandable version items showing word count and timestamp
+- Restore functionality saves current content as new version before restoring
+- Version merging logic with 10% threshold from previous session
+- History button in sidebar below "New Document"
+
+**What didn't:**
+- Diff view cancelled (too complex for MVP)
+- Unused `countBlocks` function had to be removed for clean typecheck
+
+**Decision:**
+- Use slide-in panel (not modal) for history - less intrusive
+- Show versions as timeline with relative timestamps
+- Only restore functionality for now, branch UI placeholder for future
+
+---
+
 ## How to Use
 
 After each session, document:

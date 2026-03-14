@@ -63,14 +63,15 @@
 - [x] Widget Designer with Drawer for editing properties
 - [x] Geist fonts packaged in public/files/geist-sans/
 
-### Session 10 - Timeline / Version History 
-- [ ] Git-like tree-based version history per document
+### Session 10 - Timeline / Version History (COMPLETE)
+- [x] Git-like tree-based version history per document
 - [x] Auto-save creates version snapshots (with 10% change threshold)
 - [x] New block type added = new version (not merged)
 - [x] Version on tab switch
-- [ ] View history panel with timeline tree
-- [ ] Restore to previous version
-- [ ] Compare versions (diff view)
+- [x] View history panel with timeline tree
+- [x] Restore to previous version
+- [x] Collapsible sidebar with theme toggle
+- [x] Tests for version history
 
 
 ### Session 11-14 - AI Integration

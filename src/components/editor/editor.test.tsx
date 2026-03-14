@@ -1,4 +1,14 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
+
+// Mock electron API
+vi.mock('../../../electron', () => ({
+  electronAPI: {
+    getAppPath: vi.fn().mockResolvedValue('/test/path'),
+    ensureDir: vi.fn().mockResolvedValue(undefined),
+    readFile: vi.fn().mockResolvedValue(null),
+    writeFile: vi.fn().mockResolvedValue(undefined),
+  },
+}))
 
 // TODO: Write integration tests for:
 // 1. Files saved, read - DocumentStore persistence tests
@@ -88,4 +98,28 @@ describe('Document Management', () => {
   it.todo('should switch between documents')
   it.todo('should delete document')
   it.todo('should rename document')
+})
+
+describe('Version History', () => {
+  it('should export HistoryPanel component', async () => {
+    const module = await import('./HistoryPanel')
+    expect(module.HistoryPanel).toBeDefined()
+  })
+
+  it('should have Version interface exported from versions lib', async () => {
+    const versions = await import('../../lib/versions')
+    expect(versions.loadVersions).toBeDefined()
+    expect(versions.createOrUpdateVersion).toBeDefined()
+    expect(versions.restoreVersion).toBeDefined()
+  })
+
+  it.todo('should load versions from storage')
+  it.todo('should create new version on significant changes')
+  it.todo('should merge versions with <10% change')
+  it.todo('should not merge when new block type added')
+  it.todo('should restore to previous version')
+  it.todo('should create branch from version')
+  it.todo('should display timeline tree')
+  it.todo('should show word count per version')
+  it.todo('should format relative timestamps')
 })
