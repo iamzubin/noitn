@@ -55,12 +55,13 @@
 - [x] UI for lists, code blocks, quotes via toolbar buttons
 - [x] Double-click to rename document
 
-### Session 8-9 - Widget System (NEXT)
-- [ ] Define WidgetNode in Lexical
-- [ ] Create widget registry
-- [ ] Insert Widget UI
-- [ ] Widget interaction/editing
-- [ ] Widget Designer with Drawer
+### Session 8-9 - Widget System (COMPLETE)
+- [x] Define WidgetNode in Lexical (extends DecoratorNode)
+- [x] Create widget registry (timer, checkbox, counter, table, placeholder)
+- [x] Insert widgets via slash command menu (type "/" then select widget)
+- [x] Widget interaction (timer start/stop, checkbox toggle, counter increment)
+- [x] Widget Designer with Drawer for editing properties
+- [x] Geist fonts packaged in public/files/geist-sans/
 
 ### Session 10 - Timeline / Version History 
 - [ ] Git-like tree-based version history per document

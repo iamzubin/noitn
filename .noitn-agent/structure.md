@@ -31,7 +31,14 @@ src/
 │   ├── editor/
 │   │   ├── Editor.tsx           # Lexical editor
 │   │   ├── EditorToolbar.tsx    # Toolbar with formatting buttons
-│   │   └── KeyboardShortcutsPlugin.tsx  # Keyboard shortcuts
+│   │   ├── KeyboardShortcutsPlugin.tsx  # Keyboard shortcuts
+│   │   ├── SlashCommandMenuPlugin.tsx   # Slash command menu
+│   │   ├── DraggableBlockPlugin.tsx     # Drag handles
+│   │   └── widgets/
+│   │       ├── WidgetNode.tsx      # Lexical DecoratorNode
+│   │       ├── WidgetComponent.tsx # React widget UI
+│   │       ├── WidgetDesigner.tsx  # Drawer for editing
+│   │       └── registry.tsx        # Widget definitions
 │   └── ui/                 # shadcn components (50+ files)
 │       ├── button.tsx
 │       ├── card.tsx
