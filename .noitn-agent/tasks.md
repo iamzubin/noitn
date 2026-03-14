@@ -48,9 +48,11 @@
 - [x] Keyboard shortcuts (Ctrl+B/I/U, Ctrl+1/2/3)
 - [x] Install block type packages (table, quote, list, code)
 
-### Session 7 - Block Types (NEXT)
-- [ ] Slash command menu for inserting blocks
-- [ ] UI for lists, code blocks, quotes (toolbar buttons or menu)
+### Session 7 - Block Types (COMPLETE)
+- [x] Slash command menu for inserting blocks (type "/" for H1, H2, H3, list, quote, code)
+- [x] Floating + button for inserting blocks (Lexical playground-style on hover)
+- [x] Drag handles for reordering blocks (DraggableBlockPlugin_EXPERIMENTAL)
+- [x] UI for lists, code blocks, quotes via toolbar buttons
 
 ### Session 8-10 - Widget System
 - [ ] Define WidgetNode in Lexical

@@ -14,6 +14,8 @@ import { $getRoot, ParagraphNode } from 'lexical'
 import { useDocumentStore } from '../../stores/documentStore'
 import { FloatingToolbar } from './FloatingToolbar'
 import { KeyboardShortcutsPlugin } from './KeyboardShortcutsPlugin'
+import { SlashCommandMenuPlugin } from './SlashCommandMenuPlugin'
+import { DraggableBlockPlugin } from './DraggableBlockPlugin'
 
 const theme = {
   paragraph: 'mb-2',
@@ -134,6 +136,8 @@ export function Editor() {
         <HistoryPlugin />
         <FloatingToolbar />
         <KeyboardShortcutsPlugin />
+        <SlashCommandMenuPlugin />
+        <DraggableBlockPlugin />
         <LoadContentPlugin documentId={currentDocumentId} />
         <SaveContentPlugin />
       </div>

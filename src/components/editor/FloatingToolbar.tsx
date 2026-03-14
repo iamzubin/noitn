@@ -2,10 +2,12 @@ import { useCallback, useEffect, useState } from 'react'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND, SELECTION_CHANGE_COMMAND } from 'lexical'
 import { $setBlocksType } from '@lexical/selection'
-import { $createHeadingNode, $isHeadingNode } from '@lexical/rich-text'
+import { $createHeadingNode, $isHeadingNode, QuoteNode } from '@lexical/rich-text'
+import { $createListNode, $createListItemNode } from '@lexical/list'
+import { $createCodeNode } from '@lexical/code'
 import { useFloating } from '@floating-ui/react'
 import { Button } from '@/components/ui/button'
-import { Bold, Italic, Underline, Heading1, Heading2, Heading3, Type } from 'lucide-react'
+import { Bold, Italic, Underline, Heading1, Heading2, Heading3, Type, List, ListOrdered, Quote, Code } from 'lucide-react'
 
 function ToolbarButton({ onClick, isActive, children, title }: {
   onClick: () => void
@@ -125,6 +127,50 @@ export function FloatingToolbar() {
     })
   }
 
+  const insertBulletList = () => {
+    editor.update(() => {
+      const selection = $getSelection()
+      if ($isRangeSelection(selection)) {
+        const listNode = $createListNode('bullet')
+        const listItem = $createListItemNode()
+        listNode.append(listItem)
+        selection.insertNodes([listNode])
+      }
+    })
+  }
+
+  const insertNumberedList = () => {
+    editor.update(() => {
+      const selection = $getSelection()
+      if ($isRangeSelection(selection)) {
+        const listNode = $createListNode('number')
+        const listItem = $createListItemNode()
+        listNode.append(listItem)
+        selection.insertNodes([listNode])
+      }
+    })
+  }
+
+  const insertQuote = () => {
+    editor.update(() => {
+      const selection = $getSelection()
+      if ($isRangeSelection(selection)) {
+        const quoteNode = new QuoteNode()
+        selection.insertNodes([quoteNode])
+      }
+    })
+  }
+
+  const insertCodeBlock = () => {
+    editor.update(() => {
+      const selection = $getSelection()
+      if ($isRangeSelection(selection)) {
+        const codeNode = $createCodeNode()
+        selection.insertNodes([codeNode])
+      }
+    })
+  }
+
   if (isCollapsed) {
     return null
   }
@@ -163,6 +209,19 @@ export function FloatingToolbar() {
       </ToolbarButton>
       <ToolbarButton onClick={() => setHeading('h1')} isActive={!headingLevel} title="Paragraph">
         <Type className="size-4" />
+      </ToolbarButton>
+      <div className="w-px h-5 bg-zinc-700 mx-0.5" />
+      <ToolbarButton onClick={insertBulletList} title="Bullet List">
+        <List className="size-4" />
+      </ToolbarButton>
+      <ToolbarButton onClick={insertNumberedList} title="Numbered List">
+        <ListOrdered className="size-4" />
+      </ToolbarButton>
+      <ToolbarButton onClick={insertQuote} title="Quote">
+        <Quote className="size-4" />
+      </ToolbarButton>
+      <ToolbarButton onClick={insertCodeBlock} title="Code Block">
+        <Code className="size-4" />
       </ToolbarButton>
     </div>
   )

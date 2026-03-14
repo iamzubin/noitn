@@ -119,6 +119,25 @@ See `.noitn-agent/design.md` for full list.
 
 ---
 
+## Session 7: Block Types + Draggable Blocks
+
+**What worked:**
+- SlashCommandMenuPlugin triggers on "/" character, shows filtered options
+- Lexical's DraggableBlockPlugin_EXPERIMENTAL provides drag handles on block hover
+- Floating + button inserts paragraph below current block
+- Keyboard navigation (arrows + Enter) in slash menu
+
+**What didn't:**
+- DraggableBlockPlugin needs manual CSS positioning
+- Had to create custom menu component with Plus + Grip icons
+
+**Decision:**
+- Use DraggableBlockPlugin_EXPERIMENTAL from @lexical/react
+- Menu shows on hover (left side of block), not on drag
+- Slash command for block type switching, + button for quick paragraph insert
+
+---
+
 ## How to Use
 
 After each session, document:
