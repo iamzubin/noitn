@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Editor } from './components/editor/Editor'
 
 function App() {
   const [appPath, setAppPath] = useState<string>('')
@@ -36,8 +37,8 @@ function App() {
         {version && <p style={{ fontSize: '13px' }}><strong>Version:</strong> {version}</p>}
       </div>
 
-      <div style={{ marginTop: '24px', color: '#555', fontSize: '13px' }}>
-        Electron + React + Vite setup complete!
+      <div style={{ marginTop: '24px', maxWidth: '800px' }}>
+        <Editor onReady={() => console.log('Editor ready')} />
       </div>
     </div>
   )
