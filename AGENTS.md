@@ -37,19 +37,28 @@ When working with Electron, reference these docs:
 | Packaging | https://www.electronjs.org/docs/latest/tutorial/quick-start#package-and-distribute |
 | Auto Updater | https://www.electronjs.org/docs/latest/api/auto-updater |
 
-## Session Workflow
+## Development Workflow
 
-Each session (15-20 mins):
+### Working on Main Branch (Recommended)
+For quick fixes or small changes:
 
-1. `git branch --show-current`
+1. `git branch --show-current` (should be main)
 2. Create and work on changes (user runs `npm run dev` themselves - do NOT run npm commands)
-3. Complete task from tasks.md
+3. Update docs as needed
+4. Ask user to commit: `git add . && git commit -m "Description"`
+
+### Session Workflow (For Feature Work)
+For larger features spanning multiple sessions:
+
+1. Create worktree: `git worktree add .noitn-agent/sessions/session-N -b session-N`
+2. `cd .noitn-agent/sessions/session-N`
+3. Work on changes
 4. **Update docs** - Add learnings to `.noitn-agent/learning.md`, update `.noitn-agent/codemap.md` if architecture changed
 5. Ask user: "Should I mark the task as complete in `.noitn-agent/tasks.md`?" (mention they can see the change with `git diff .noitn-agent/tasks.md`)
 6. If yes, update tasks.md with the completed session
-7. Ask user to run `git add . && git commit -m "Session N: <description>"`
-8. Ask user to run `git checkout main && git merge session-N --no-ff`
-9. Ask user to remove worktree: `git worktree remove .noitn-agent/sessions/session-N`
+7. Commit: `git add . && git commit -m "Session N: <description>"`
+8. Merge: `git checkout main && git merge session-N --no-ff`
+9. Remove worktree: `git worktree remove .noitn-agent/sessions/session-N`
 
 ## Always Update Docs
 
