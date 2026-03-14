@@ -73,40 +73,27 @@ Session learnings, pitfalls, and decisions go here.
 
 ---
 
-## Session 6-10: Sidebar + Document Switching
-
-**What worked:**
-- Zustand store for document state
-- Sidebar in Layout with document list
-- New Document creates both doc file and blocks file
-
-**What didn't:**
-- Each document needs its own blocks file - added in createDocument()
-- Initial load needed to handle empty state
-
-**Decision:**
-- Each doc gets empty paragraph on creation
-- Auto-save before switching documents
-
----
-
-## Session 6: Editor Toolbar (Floating)
+## Session 6: Sidebar + Toolbar + Editor Features
 
 **What worked:**
 - FloatingToolbar using @floating-ui/react for positioning
 - Shows on text selection, hides when collapsed
 - Uses `getBoundingClientRect()` on window.getSelection() for positioning
 - Bubble-style with dark zinc theme matching Notion
+- Zustand store for document state
+- Sidebar with document list, new document, delete document
 
 **What didn't:**
 - Lexical doesn't have built-in floating toolbar plugin
 - Had to use selectionchange event + Lexical's SELECTION_CHANGE_COMMAND
 - Toolbar positioning needs manual calculation above selection
+- Each document needs its own blocks file
 
 **Decision:**
 - Use floating bubble menu (Notion-style) instead of fixed toolbar
 - Dark theme: bg-zinc-900/95 with backdrop blur
 - Buttons: white icons, hover shows white/10 bg
+- Auto-save before switching documents
 
 **Available Block Types:**
 - @lexical/table - Tables
@@ -119,22 +106,32 @@ See `.noitn-agent/design.md` for full list.
 
 ---
 
-## Session 7: Block Types + Draggable Blocks
+## Session 7: Block Types + Draggable Blocks + Versions
 
 **What worked:**
 - SlashCommandMenuPlugin triggers on "/" character, shows filtered options
 - Lexical's DraggableBlockPlugin_EXPERIMENTAL provides drag handles on block hover
 - Floating + button inserts paragraph below current block
 - Keyboard navigation (arrows + Enter) in slash menu
+- Version history with 10% change threshold
+- New block type (widget, list) always creates new version
+- Double-click to rename documents in sidebar
 
 **What didn't:**
 - DraggableBlockPlugin needs manual CSS positioning
 - Had to create custom menu component with Plus + Grip icons
+- Toolbar buttons (underline, lists) had z-index/pointer-events issues
 
 **Decision:**
 - Use DraggableBlockPlugin_EXPERIMENTAL from @lexical/react
 - Menu shows on hover (left side of block), not on drag
 - Slash command for block type switching, + button for quick paragraph insert
+- Version created on auto-save AND tab switch
+- `createOrUpdateVersion` in versions.ts handles merge logic
+
+**Known Issues:**
+- Electron menu warning on macOS (harmless)
+- Toolbar button interactions may need debugging
 
 ---
 

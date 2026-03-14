@@ -183,8 +183,9 @@ export function FloatingToolbar() {
         left: position.x,
         top: position.y - 8,
         transform: 'translate(-50%, -100%)',
+        zIndex: 1000,
       }}
-      className="flex items-center gap-0.5 px-1 py-1 rounded-lg bg-zinc-900/95 backdrop-blur shadow-lg border border-zinc-800/50"
+      className="flex items-center gap-0.5 px-1 py-1 rounded-lg bg-zinc-900/95 backdrop-blur shadow-lg border border-zinc-800/50 pointer-events-auto"
       onMouseDown={(e) => e.preventDefault()}
     >
       <ToolbarButton onClick={formatBold} isActive={isBold} title="Bold (Ctrl+B)">

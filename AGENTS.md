@@ -145,3 +145,13 @@ For each session:
    f. Run build: `npm run build`
 4. Commit with passing tests
 5. Update learning.md with what worked/didn't
+
+## Testing Requirements
+
+Every feature should have corresponding tests in `src/components/editor/editor.test.tsx` or a new test file. Tests should cover:
+- Component exports and rendering
+- User interactions (clicks, keyboard shortcuts)
+- State changes
+- Integration with Lexical editor
+
+Run tests: `npm test`
