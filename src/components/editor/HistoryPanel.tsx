@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Clock, RotateCcw, X } from 'lucide-react'
+import { Clock, X, RotateCcw } from 'lucide-react'
 import { Version, loadVersions } from '../../lib/versions'
 import { useDocumentStore } from '../../stores/documentStore'
 import { Button } from '../ui/button'
@@ -7,6 +7,7 @@ import { Button } from '../ui/button'
 interface HistoryPanelProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onVersionRestore: (version: Version) => void
 }
 
 function formatDate(timestamp: number): string {
@@ -30,13 +31,12 @@ function formatDate(timestamp: number): string {
   })
 }
 
-export function HistoryPanel({ open, onOpenChange }: HistoryPanelProps) {
+export function HistoryPanel({ open, onOpenChange, onVersionRestore }: HistoryPanelProps) {
   const [versions, setVersions] = useState<Version[]>([])
   const [loading, setLoading] = useState(false)
-  const [selectedVersion, setSelectedVersion] = useState<Version | null>(null)
+  const [selectedVersionId, setSelectedVersionId] = useState<string | null>(null)
   
   const currentDocumentId = useDocumentStore((state) => state.currentDocumentId)
-  const saveCurrentBlocks = useDocumentStore((state) => state.saveCurrentBlocks)
 
   useEffect(() => {
     if (open && currentDocumentId) {
@@ -47,18 +47,15 @@ export function HistoryPanel({ open, onOpenChange }: HistoryPanelProps) {
     }
   }, [open, currentDocumentId])
 
-  useEffect(() => {
-    if (!open) {
-      setSelectedVersion(null)
-    }
-  }, [open])
-
   const handleRestore = async () => {
-    if (!selectedVersion) return
+    if (!selectedVersionId) return
     
-    await saveCurrentBlocks(selectedVersion.content)
-    setSelectedVersion(null)
-    onOpenChange(false)
+    const version = versions.find(v => v.id === selectedVersionId)
+    if (version) {
+      await onVersionRestore(version)
+      setSelectedVersionId(null)
+      onOpenChange(false)
+    }
   }
 
   return (
@@ -89,27 +86,6 @@ export function HistoryPanel({ open, onOpenChange }: HistoryPanelProps) {
             <X className="h-4 w-4" />
           </Button>
         </div>
-
-        {selectedVersion && (
-          <div className="p-3 bg-orange-50 dark:bg-orange-950/30 border-b">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium">Restore this version?</p>
-                <p className="text-xs text-muted-foreground">
-                  Current content will be saved as a new version
-                </p>
-              </div>
-              <Button
-                size="sm"
-                onClick={handleRestore}
-                className="bg-orange-500 hover:bg-orange-600 text-white"
-              >
-                <RotateCcw className="h-3 w-3 mr-1" />
-                Restore
-              </Button>
-            </div>
-          </div>
-        )}
         
         <div className="p-4 overflow-auto h-[calc(100vh-60px)]">
           {loading ? (
@@ -119,11 +95,11 @@ export function HistoryPanel({ open, onOpenChange }: HistoryPanelProps) {
           ) : (
             <div className="space-y-1">
               {versions.map((version, index) => (
-                <button
+                <div
                   key={version.id}
-                  onClick={() => setSelectedVersion(version)}
+                  onClick={() => setSelectedVersionId(version.id)}
                   className={`w-full relative flex items-start gap-3 py-2 px-2 rounded-lg hover:bg-accent/50 transition-colors text-left ${
-                    selectedVersion?.id === version.id ? 'bg-orange-50 dark:bg-orange-950/30' : ''
+                    selectedVersionId === version.id ? 'bg-primary/20' : ''
                   }`}
                 >
                   <div className="absolute left-3 top-8 bottom-0 w-px bg-border" />
@@ -142,11 +118,25 @@ export function HistoryPanel({ open, onOpenChange }: HistoryPanelProps) {
                       {formatDate(version.createdAt)}
                     </p>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           )}
         </div>
+        
+        {selectedVersionId && (
+          <div className="absolute bottom-4 left-4 right-4">
+            <Button
+              variant="default"
+              size="sm"
+              onClick={handleRestore}
+              className="w-full"
+            >
+              <RotateCcw className="h-3 w-3 mr-1" />
+              Restore Version
+            </Button>
+          </div>
+        )}
       </div>
     </>
   )

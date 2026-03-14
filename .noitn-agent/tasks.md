@@ -63,23 +63,49 @@
 - [x] Widget Designer with Drawer for editing properties
 - [x] Geist fonts packaged in public/files/geist-sans/
 
-### Session 10 - Timeline / Version History (COMPLETE)
+### Session 10 - Timeline / Version History (NEEDS IMPROVEMENT)
 - [x] Git-like tree-based version history per document
 - [x] Auto-save creates version snapshots (with 10% change threshold)
 - [x] New block type added = new version (not merged)
 - [x] Version on tab switch
 - [x] View history panel with timeline tree
-- [x] Restore to previous version
+- [ ] Restore to previous version with read-only preview mode
 - [x] Collapsible sidebar with theme toggle
 - [x] Tests for version history
 - [x] Simplified version history UI (Google Docs style)
-- [x] Click to select version, restore button appears on selection
+- [ ] Prominent restore button with visual feedback when version selected
+- [ ] Read-only mode when previewing old versions (no editing allowed)
+- [ ] Automatic branch creation when editing old versions (git-like behavior)
 
-### Session 11-14 - AI Integration
-- [ ] AI SDK setup
-- [ ] Widget generation
-- [ ] Context-aware prompts
-- [ ] Loading states + error handling
+### Session 11-14 - AI Integration (BROKEN DOWN)
+#### Session 11: AI SDK Setup
+- [ ] AI SDK provider configuration (OpenAI/Anthropic/Groq)
+- [ ] API key input/storage in settings
+- [ ] Basic text generation test
+- [ ] Error handling for API failures
+
+#### Session 12: Context-Aware AI Features
+- [ ] AI-powered widget generation from natural language
+- [ ] Context-aware prompts based on document content
+- [ ] Smart suggestions for formatting and structure
+- [ ] AI-assisted content completion
+
+#### Session 13: AI Loading States & UX
+- [ ] Loading spinners/skeletons for AI operations
+- [ ] Progressive disclosure of AI results
+- [ ] Cancel/in-progress state indicators
+- [ ] Error states with retry mechanisms
+
+#### Session 14: AI Polish & Integration
+- [ ] AI toolbar button with dropdown menu
+- [ ] Keyboard shortcuts for AI commands
+- [ ] History of AI-generated content
+- [ ] Feedback mechanism for AI quality
+
+### Session 15-16 - Polish
+- [ ] Keyboard shortcuts
+- [ ] Final testing
+- [ ] README
 
 ### Session 15-16 - Polish
 - [ ] Keyboard shortcuts

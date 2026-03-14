@@ -204,6 +204,13 @@ export function Layout({ children }: LayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [historyOpen, setHistoryOpen] = useState(false)
 
+  const handleVersionRestore = async (version: any) => {
+    // This function will be called when a version is selected for restore
+    // The actual logic is handled in Editor.tsx which has access to the editor instance
+    // For now, we'll just log it - the real implementation is in Editor
+    console.log('Version selected for restore:', version)
+  }
+
   return (
     <div className="relative h-screen bg-background text-foreground">
       <TitleBar />
@@ -219,7 +226,7 @@ export function Layout({ children }: LayoutProps) {
         </div>
       </main>
       
-      <HistoryPanel open={historyOpen} onOpenChange={setHistoryOpen} />
+       <HistoryPanel open={historyOpen} onOpenChange={setHistoryOpen} />
     </div>
   )
 }
