@@ -3,3 +3,16 @@ dist/
 release/
 *.log
 .DS_Store
+
+# Electron
+release/
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
