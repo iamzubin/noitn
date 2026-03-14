@@ -135,6 +135,28 @@ See `.noitn-agent/design.md` for full list.
 
 ---
 
+## Session 8-9: Widget System
+
+**What worked:**
+- WidgetNode extends DecoratorNode for React component rendering
+- decorate() method returns WidgetComponent which handles all widget types
+- Slash command menu dynamically adds widget options from registry
+- Widget types: timer, checkbox, counter, table, placeholder
+- WidgetDesigner drawer for editing widget properties
+- Geist fonts copied to public/files/ for packaging
+
+**What didn't:**
+- Initially tried to render widgets separately via WidgetRenderer - caused duplicate key errors
+- Fixed by removing WidgetRenderer and using Lexical's built-in DecoratorNode rendering
+- Had duplicate registry.ts file that was causing issues
+
+**Decision:**
+- Use Lexical's DecoratorNode decorate() for widget rendering (automatic)
+- WidgetRenderer removed - not needed
+- Fonts added to public/files/ and copied to dist on build
+
+---
+
 ## How to Use
 
 After each session, document:

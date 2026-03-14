@@ -4,20 +4,23 @@ import { $getSelection, $isRangeSelection, LexicalCommand, createCommand, Editor
 import { $createHeadingNode, $isHeadingNode, QuoteNode } from '@lexical/rich-text'
 import { $createListNode, $createListItemNode, $isListNode } from '@lexical/list'
 import { $createCodeNode, CodeNode } from '@lexical/code'
-import { $getRoot, ElementNode, TextNode } from 'lexical'
+import { $getRoot, TextNode, LexicalNode, ElementNode } from 'lexical'
+import { $createWidgetNode } from './widgets/WidgetNode'
+import { widgetTypes } from './widgets/registry'
 
 export const INSERT_ORDERED_LIST_COMMAND: LexicalCommand<void> = createCommand('INSERT_ORDERED_LIST_COMMAND')
 export const INSERT_UNORDERED_LIST_COMMAND: LexicalCommand<void> = createCommand('INSERT_UNORDERED_LIST_COMMAND')
 export const INSERT_CODE_BLOCK_COMMAND: LexicalCommand<void> = createCommand('INSERT_CODE_BLOCK_COMMAND')
 export const INSERT_QUOTE_COMMAND: LexicalCommand<void> = createCommand('INSERT_QUOTE_COMMAND')
 
-export type BlockType = 'paragraph' | 'h1' | 'h2' | 'h3' | 'ul' | 'ol' | 'quote' | 'code'
+export type BlockType = 'paragraph' | 'h1' | 'h2' | 'h3' | 'ul' | 'ol' | 'quote' | 'code' | 'widget'
 
 export interface SlashCommandMenuOption {
   blockType: BlockType
   label: string
   icon: React.ReactNode
   keywords: string[]
+  widgetType?: string
 }
 
 const blockTypes: SlashCommandMenuOption[] = [
@@ -63,6 +66,13 @@ const blockTypes: SlashCommandMenuOption[] = [
     icon: <span>{'</>}'}</span>,
     keywords: ['code', 'pre', 'codeblock'],
   },
+  ...widgetTypes.map((type) => ({
+    blockType: 'widget' as const,
+    label: type.charAt(0).toUpperCase() + type.slice(1),
+    icon: <span>W</span>,
+    keywords: ['widget', type],
+    widgetType: type,
+  })),
 ]
 
 function useSlashCommandMenu(editor: ReturnType<typeof useLexicalComposerContext>[0], options: SlashCommandMenuOption[]) {
@@ -159,7 +169,7 @@ export function SlashCommandMenuPlugin({
   }, [filteredOptions])
 
   const insertBlock = useCallback(
-    (blockType: BlockType) => {
+    (blockType: BlockType, widgetType?: string) => {
       editor.update(() => {
         const selection = $getSelection()
         if (!$isRangeSelection(selection)) return
@@ -185,7 +195,7 @@ export function SlashCommandMenuPlugin({
           }
         }
 
-        let blockNode: ElementNode
+        let blockNode: LexicalNode
         switch (blockType) {
           case 'h1':
             blockNode = $createHeadingNode('h1')
@@ -216,6 +226,13 @@ export function SlashCommandMenuPlugin({
           case 'code':
             blockNode = $createCodeNode()
             break
+          case 'widget': {
+            if (!widgetType) return
+            const { createDefaultWidgetConfig } = require('./widgets/registry')
+            const config = createDefaultWidgetConfig(widgetType as 'timer' | 'checkbox' | 'counter' | 'table' | 'placeholder')
+            blockNode = $createWidgetNode(config)
+            break
+          }
           default:
             return
         }
@@ -233,7 +250,7 @@ export function SlashCommandMenuPlugin({
           root.append(blockNode)
         }
 
-        blockNode.select()
+        ;(blockNode as ElementNode).select()
       })
       closeMenu()
     },
@@ -256,7 +273,8 @@ export function SlashCommandMenuPlugin({
         case 'Enter':
           e.preventDefault()
           if (filteredOptions[selectedIndex]) {
-            insertBlock(filteredOptions[selectedIndex].blockType)
+            const option = filteredOptions[selectedIndex]
+            insertBlock(option.blockType, option.widgetType)
           }
           break
         case 'Escape':
@@ -300,7 +318,7 @@ export function SlashCommandMenuPlugin({
               ? 'bg-accent/20 text-accent'
               : 'text-white/80 hover:bg-white/10 hover:text-white'
           }`}
-          onClick={() => insertBlock(option.blockType)}
+          onClick={() => insertBlock(option.blockType, option.widgetType)}
           onMouseEnter={() => setSelectedIndex(index)}
         >
           <span className="w-8 flex items-center justify-center text-white/60">{option.icon}</span>

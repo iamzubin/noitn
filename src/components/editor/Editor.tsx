@@ -16,6 +16,7 @@ import { FloatingToolbar } from './FloatingToolbar'
 import { KeyboardShortcutsPlugin } from './KeyboardShortcutsPlugin'
 import { SlashCommandMenuPlugin } from './SlashCommandMenuPlugin'
 import { DraggableBlockPlugin } from './DraggableBlockPlugin'
+import { WidgetNode } from './widgets/WidgetNode'
 
 const theme = {
   paragraph: 'mb-2',
@@ -116,7 +117,7 @@ export function Editor() {
     namespace: 'NoitnEditor',
     theme,
     onError,
-    nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, LinkNode, TableNode, TableCellNode, TableRowNode],
+    nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, LinkNode, TableNode, TableCellNode, TableRowNode, WidgetNode],
   }
 
   if (!currentDocumentId) {

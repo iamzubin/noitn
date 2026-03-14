@@ -73,3 +73,17 @@ window.electronAPI {
 - Drag region via `WebkitAppRegion: drag`
 - Traffic light spacing: `pl-16` for macOS alignment
 - z-index: 100 to overlay content
+
+## Widget System
+
+- `src/components/editor/widgets/WidgetNode.tsx` - Lexical DecoratorNode for widgets
+- `src/components/editor/widgets/WidgetComponent.tsx` - React component for widget UI
+- `src/components/editor/widgets/WidgetDesigner.tsx` - Drawer for editing widget properties
+- `src/components/editor/widgets/registry.tsx` - Widget type definitions and configs
+- Widget types: timer, checkbox, counter, table, placeholder
+
+### Inserting Widgets
+
+- Type `/` in editor to open slash command menu
+- Widget options appear at bottom of menu
+- Select widget type to insert at cursor position

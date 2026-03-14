@@ -55,7 +55,14 @@
 - [x] UI for lists, code blocks, quotes via toolbar buttons
 - [x] Double-click to rename document
 
-### Session 8 - Timeline / Version History (NEXT)
+### Session 8-9 - Widget System (NEXT)
+- [ ] Define WidgetNode in Lexical
+- [ ] Create widget registry
+- [ ] Insert Widget UI
+- [ ] Widget interaction/editing
+- [ ] Widget Designer with Drawer
+
+### Session 10 - Timeline / Version History 
 - [ ] Git-like tree-based version history per document
 - [x] Auto-save creates version snapshots (with 10% change threshold)
 - [x] New block type added = new version (not merged)
@@ -64,12 +71,6 @@
 - [ ] Restore to previous version
 - [ ] Compare versions (diff view)
 
-### Session 9-10 - Widget System
-- [ ] Define WidgetNode in Lexical
-- [ ] Create widget registry
-- [ ] Insert Widget UI
-- [ ] Widget interaction/editing
-- [ ] Widget Designer with Drawer
 
 ### Session 11-14 - AI Integration
 - [ ] AI SDK setup
