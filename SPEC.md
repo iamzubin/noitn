@@ -60,14 +60,37 @@ Users provide their own API keys or use local Ollama. API keys stored in app con
 
 ## Core Features
 
-1. **Block-Based Editing** - Lexical-powered rich text with slash commands
-2. **AI Widget Generation** - Generate widgets via AI from context
-3. **Widget Designer** - Right-click widget → "Edit Widget" opens designer panel
-4. **Context-Aware** - AI sees text around cursor for relevant widgets
-5. **Sidebar Navigation** - Switch between documents
-6. **Local JSON Storage** - No cloud, all data in app folder
-7. **Light/Dark Theme** - Sunset Noir with toggle
-8. **Timeline / Version History** - Git-like tree-based version history per document
+### Editor (Lexical)
+- **Block-Based Editing** - Lexical-powered rich text
+- **Slash Commands** - Type `/` for quick block insertion (headings, lists, quotes, code)
+- **Floating Toolbar** - Notion-style bubble on text selection (bold, italic, underline, headings)
+- **Keyboard Shortcuts** - Ctrl+B/I/U for formatting, Ctrl+1/2/3 for headings
+- **Draggable Blocks** - Hover to show + and grip handle, drag to reorder
+- **Block Types** - Paragraph, Headings (H1-H3), Lists (bullet/numbered), Quotes, Code blocks
+
+### Documents
+- **Sidebar Navigation** - List all documents, click to switch
+- **Create Document** - New button in sidebar
+- **Delete Document** - Trash icon on hover
+- **Rename Document** - Double-click title to edit
+- **Auto-Save** - Debounced 1 second after typing stops
+- **Save on Switch** - Automatically saves when switching documents
+
+### Version History
+- **Git-like Timeline** - Tree-based version history per document
+- **Smart Merging** - <10% word change = merge into previous version
+- **New Block Detection** - New block types (widgets, lists) always create new version
+- **Version on Switch** - Creates version when switching documents
+
+### UI/Theme
+- **Sunset Noir Theme** - Dark mode with orange accents (#FF4F11)
+- **Light/Dark Toggle** - Header button to switch themes
+- **Custom Titlebar** - Frameless window with custom controls
+
+### AI (Future)
+- **Widget Generation** - Generate widgets via AI from context
+- **Widget Designer** - Right-click widget → "Edit Widget" opens designer panel
+- **Context-Aware** - AI sees text around cursor for relevant widgets
 
 ---
 
@@ -104,24 +127,25 @@ All UI built with shadcn/ui:
 - Designer saves back to widget state on confirm
 - Supports all shadcn form components for editing
 
-### Timeline / Version History
+### Timeline / Version History (Implemented)
 
-**Git-like tree-based versioning:**
-- Every auto-save creates a new version node
-- Versions form a tree (branches when user explicitly creates a branch)
-- Each version has: timestamp, content snapshot, optional message
-- Tree visualization in sidebar panel
-- Click any node to view/restore that version
-- "Branch" creates new timeline from any version
-- "Merge" not required (local-first, no conflict resolution needed)
+**Smart Versioning:**
+- Creates version on auto-save AND document switch
+- Merges into previous version if word count change < 10%
+- Always creates new version if new block type added (widget, list, etc.)
+- Each version stores: id, parentId, content, message, timestamp, wordCount
 
 **Version Storage:**
 ```
 /data/versions/
   /{documentId}/
-    /versions.json    # Tree structure metadata
-    /{versionId}.json # Content snapshots (compressed)
+    /versions.json    # Version tree (all versions)
 ```
+
+**Future:**
+- Tree visualization in sidebar panel
+- Click any node to view/restore that version
+- "Branch" creates new timeline from any version
 
 ---
 
@@ -146,7 +170,8 @@ All UI built with shadcn/ui:
   "parentId": "uuid | null",
   "content": "Lexical JSON",
   "message": "Optional commit message",
-  "createdAt": "ISO timestamp"
+  "createdAt": "ISO timestamp",
+  "wordCount": number
 }
 ```
 
@@ -187,29 +212,27 @@ src/
 │   ├── ui/                    # shadcn components (generated)
 │   ├── editor/
 │   │   ├── Editor.tsx         # Main Lexical editor
-│   │   ├── Toolbar.tsx        # Formatting toolbar
-│   │   ├── SlashMenu.tsx      # Slash command menu
-│   │   └── nodes/             # Custom Lexical nodes
-│   ├── widgets/
-│   │   ├── WidgetRenderer.tsx # Renders widget by type
-│   │   ├── WidgetDesigner.tsx # Edit widget in drawer
-│   │   ├── KanbanWidget.tsx
-│   │   ├── TableWidget.tsx
-│   │   └── CardWidget.tsx
+│   │   ├── FloatingToolbar.tsx # Notion-style bubble toolbar
+│   │   ├── SlashCommandMenuPlugin.tsx # / command menu
+│   │   ├── DraggableBlockPlugin.tsx   # Drag handles + button
+│   │   ├── KeyboardShortcutsPlugin.tsx # Ctrl+B/I/U shortcuts
+│   │   └── editor.test.tsx    # Editor tests
 │   ├── layout/
-│   │   ├── Sidebar.tsx        # Document list
 │   │   └── Layout.tsx         # Main layout wrapper
 │   └── ThemeToggle.tsx        # Dark/light toggle
 ├── lib/
-│   ├── ai-scope.ts            # AI allowed imports
 │   ├── storage.ts             # JSON file operations
-│   └── ai.ts                 # AI SDK setup
+│   ├── versions.ts            # Version history logic
+│   ├── ai-scope.ts            # AI allowed imports (future)
+│   └── ai.ts                 # AI SDK setup (future)
 ├── stores/
-│   └── documentStore.ts       # Document state
+│   └── documentStore.ts       # Document state (Zustand)
 ├── hooks/
-│   └── useAI.ts               # AI generation hook
-├── App.tsx
-└── main.tsx
+│   └── useTheme.ts           # Theme toggle hook
+├── test/
+│   └── setup.ts              # Vitest setup
+├── App.tsx                   # Main app with sidebar
+└── main.tsx                  # React entry point
 ```
 
 ---
